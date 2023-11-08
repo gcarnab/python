@@ -64,15 +64,25 @@ def disegna_cartesiano(x, y, lunghezza_assi, colore_assi, spessore_assi, dimensi
     t.dot(5, 'red')  # Disegna un punto colorato al centro
     t.write(f"({x}, {y})", align="left", font=("Arial", 12, "normal"))
 
+    #================> FIGURE <=================#
+
     # Esempio di utilizzo della funzione per disegnare una retta da (50, 50) a (200, 150)
     disegna_retta(t,-50, -50, 50, 50, "yellow")
 
+    # Esempio di utilizzo della funzione per disegnare un rettangolo 
+    disegna_rettangolo(t, -100, -100, 100, 100, "red", "yellow", True)
+
     # Esempio di utilizzo della funzione per disegnare un cerchio con centro in (50, 50) e raggio 100
-    disegna_cerchio(t, 20, 20, 100, "blue")
+    disegna_cerchio(t, -100, 100, 50, "blue", "orange", True)
+
+    # Esempio di utilizzo della funzione per disegnare un triangolo 
+    disegna_triangolo_con_punto(t, 0, 100, 100, 200, 200, 100, "red", "yellow",True)
+
+
+    #============================================#
 
     # Chiudi la finestra quando si fa clic sopra di essa
     turtle.done()
-
 
 
 def disegna_retta(t, x1, y1, x2, y2, colore_linea):
@@ -91,16 +101,25 @@ def disegna_retta(t, x1, y1, x2, y2, colore_linea):
     # Disegna la retta fino alla posizione finale
     t.goto(x2, y2)
 
+    t.home() # ritorno all'origine
+
     # Chiudi la finestra quando si fa clic sopra di essa
     #turtle.done()
 
-def disegna_cerchio(t, x, y, raggio, colore_linea):
+def disegna_cerchio(t, x, y, raggio, colore_linea, colore_fill,fill_flag):
     # Crea una tartaruga
     #t = turtle.Turtle()
 
     # Imposta la velocità della tartaruga
     #t.speed(0)  # 0 è la massima velocità
     t.color(colore_linea)  # Imposta il colore della linea
+
+    # Imposta il colore del riempimento
+    t.fillcolor(colore_fill)
+
+    # To draw a filled shape, start with this call
+    if fill_flag :
+        t.begin_fill()
 
     # Sposta la tartaruga al punto di inizio del cerchio
     t.penup()
@@ -110,15 +129,115 @@ def disegna_cerchio(t, x, y, raggio, colore_linea):
     # Disegna il cerchio
     t.circle(raggio)
 
+    # Termina il riempimento del cerchio
+    if fill_flag :
+        t.end_fill()
+
     # Disegna un punto al centro del cerchio
     t.penup()
     t.goto(x, y)  # Sposta la tartaruga al centro del cerchio
-    t.dot(5, colore_linea)  # Disegna un punto rosso al centro del cerchio
+    t.write(t.pos())
+    t.dot(5, 'yellow')  # Disegna un punto rosso al centro del cerchio
     
+    t.home() # ritorno all'origine
+
+    # Chiudi la finestra quando si fa clic sopra di essa
+    #turtle.done()
+
+#Il centro di un triangolo può essere calcolato come la media aritmetica delle coordinate dei suoi vertici
+def calcola_centro_triangolo(x1, y1, x2, y2, x3, y3):
+    centro_x = (x1 + x2 + x3) / 3
+    centro_y = (y1 + y2 + y3) / 3
+    return centro_x, centro_y
+
+def disegna_triangolo_con_punto(t, x1, y1, x2, y2, x3, y3, colore_linea, colore_riempimento, fill_flag):
+    # Crea una tartaruga
+    #t = turtle.Turtle()
+
+    # Imposta il colore della linea e del riempimento
+    t.color(colore_linea, colore_riempimento)
+
+    # Imposta la velocità della tartaruga
+    t.speed(0)  # 0 è la massima velocità
+
+    # Calcola le coordinate del centro del triangolo
+    centro_x, centro_y = calcola_centro_triangolo(x1, y1, x2, y2, x3, y3)
+
+    # Sposta la tartaruga al punto di inizio del triangolo
+    t.penup()
+    t.goto(x1, y1)
+    t.pendown()
+
+    # Inizia il riempimento del triangolo
+    if fill_flag : 
+        t.begin_fill()
+
+    # Disegna il triangolo
+    t.goto(x2, y2)
+    t.write(t.pos())
+    t.goto(x3, y3)
+    t.write(t.pos())
+    t.goto(x1, y1)
+    t.write(t.pos())
+
+    # Termina il riempimento del triangolo
+    if fill_flag : 
+        t.end_fill()
+
+    # Disegna un punto al centro del triangolo
+    t.penup()
+    t.goto(centro_x, centro_y)  # Sposta la tartaruga al centro del triangolo
+    t.write(t.pos())
+    t.dot(5, "black")  # Disegna un punto nero al centro del triangolo
+
+    # Chiudi la finestra quando si fa clic sopra di essa
+    turtle.done()
+
+def disegna_rettangolo(t, x, y, larghezza, altezza, colore_linea, colore_riempimento, fill_flag):
+    # Crea una tartaruga
+    #t = turtle.Turtle()
+
+    # Imposta il colore della linea e del riempimento
+    t.color(colore_linea, colore_riempimento)
+
+    # Imposta la velocità della tartaruga
+    #t.speed(0)  # 0 è la massima velocità
+
+    # Sposta la tartaruga al punto iniziale del rettangolo
+    t.penup()
+    t.goto(x - larghezza / 2, y - altezza / 2)
+    t.pendown()
+
+    # Inizia il riempimento del rettangolo
+    if fill_flag :
+        t.begin_fill()
+
+    # Disegna il rettangolo
+    for _ in range(2):
+        t.forward(larghezza)  # Lato orizzontale
+        t.left(90)  # Angolo di 90 gradi per girare a sinistra
+        t.forward(altezza)  # Lato verticale
+        t.left(90)  # Angolo di 90 gradi per girare a sinistra
+
+    # Termina il riempimento del rettangolo
+    if fill_flag :
+        t.end_fill()
+
+    # Disegna un punto al centro 
+    t.penup()
+    t.goto(x, y)  # Sposta la tartaruga al centro
+    t.write(t.pos())
+    t.dot(5, 'black')  # Disegna un punto al centro
+
     # Chiudi la finestra quando si fa clic sopra di essa
     #turtle.done()
 
 
+
+#================> MAIN <=================#
+
 # Esempio di utilizzo della funzione con parametri specifici
 disegna_cartesiano(x=0, y=0, lunghezza_assi=300, colore_assi="black", spessore_assi=2, dimensione_griglia=0)
+
+
 
