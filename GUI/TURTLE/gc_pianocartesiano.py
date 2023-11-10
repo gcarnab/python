@@ -66,7 +66,7 @@ def disegna_cartesiano(x, y, lunghezza_assi, colore_assi, spessore_assi, dimensi
 
     #================> FIGURE <=================#
 
-    # Esempio di utilizzo della funzione per disegnare una retta da (50, 50) a (200, 150)
+    # Esempio di utilizzo della funzione per disegnare una retta
     disegna_retta(t,-50, -50, 50, 50, "yellow")
 
     # Esempio di utilizzo della funzione per disegnare un rettangolo 
