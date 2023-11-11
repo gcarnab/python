@@ -7,3 +7,4 @@ ___
 ## Resources :
 
 - https://zetcode.com/wxpython/introduction/
+- https://www.tutorialspoint.com/wxpython/index.htm
