@@ -8,3 +8,4 @@ ___
 
 - https://zetcode.com/wxpython/introduction/
 - https://www.tutorialspoint.com/wxpython/index.htm
+- https://realpython.com/storing-images-in-python/
