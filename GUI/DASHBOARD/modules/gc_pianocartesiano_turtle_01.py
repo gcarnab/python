@@ -1,3 +1,4 @@
+# Modulo 1 TURTLE
 import turtle
 
 #======= SETTINGS =======#
@@ -67,16 +68,16 @@ def disegna_cartesiano(x, y, lunghezza_assi, colore_assi, spessore_assi, dimensi
     #================> FIGURE <=================#
 
     # Esempio di utilizzo della funzione per disegnare una retta
-    disegna_retta(t,-50, -50, 50, 50, "yellow")
+    #disegna_retta(t,-50, -50, 50, 50, "yellow")
 
     # Esempio di utilizzo della funzione per disegnare un rettangolo 
-    disegna_rettangolo(t, -100, -100, 100, 100, "red", "yellow", True)
+    #disegna_rettangolo(t, -100, -100, 100, 100, "red", "yellow", True)
 
     # Esempio di utilizzo della funzione per disegnare un cerchio con centro in (50, 50) e raggio 100
-    disegna_cerchio(t, -100, 100, 50, "blue", "orange", True)
+    #disegna_cerchio(t, -100, 100, 50, "blue", "orange", True)
 
     # Esempio di utilizzo della funzione per disegnare un triangolo 
-    disegna_triangolo_con_punto(t, 0, 100, 100, 200, 200, 100, "red", "yellow",True)
+    #disegna_triangolo_con_punto(t, 0, 100, 100, 200, 200, 100, "red", "yellow",True)
 
 
     #============================================#
