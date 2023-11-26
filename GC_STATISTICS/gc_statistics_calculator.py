@@ -117,7 +117,7 @@ def mostra_grafico(dati, formato, opzione):
         plt.legend()
         plt.xlabel('Indice')
         plt.ylabel('Valori')
-        plt.title('Grafico dei Dati con Deviazione Standard')
+        plt.title('Grafico della Deviazione Standard')
         plt.show()
     elif opzione == "fibonacci":
         # Aggiungi il codice per generare e visualizzare la sequenza di Fibonacci
