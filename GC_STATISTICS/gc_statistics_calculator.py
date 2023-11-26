@@ -11,17 +11,31 @@ circolare o a torta, cartesiano e istogramma
 import statistics
 import matplotlib.pyplot as plt
 
+#======> STATISTICAL FUNCTIONS <======#
+
+# Funzione per calcolare la media
 def calcola_media(dati):
     return statistics.mean(dati)
 
+# Funzione per calcolare la mediana
 def calcola_mediana(dati):
     return statistics.median(dati)
 
+# Funzione per calcolare la moda
 def calcola_moda(dati):
     try:
         return statistics.mode(dati)
     except statistics.StatisticsError:
         return "Nessuna moda"
+
+# Funzione per calcolare la deviazione standard
+def calcola_deviazione_standard(dati):
+    if len(dati) >= 2:
+        return statistics.stdev(dati)
+    else:
+        return None
+
+#======> NUMERICAL FUNCTIONS <======#    
 
 def genera_fibonacci(n):
     fibonacci = [0, 1]
@@ -89,13 +103,23 @@ def mostra_grafico(dati, formato, opzione):
     elif opzione == "moda" or opzione == "3":
         # Aggiungi il codice per il grafico basato sulla moda
         moda = calcola_moda(dati)
-        plt.bar(moda.keys(), moda.values(), color='orange', label='Moda')
+        plt.axhline(y=moda, color='green', linestyle='--', label=f'Moda: {moda:.2f}')
         plt.plot(dati, marker='o', label='Dati di Input')
         plt.legend()
         plt.xlabel('Elementi')
-        plt.ylabel('Frequenza')
+        plt.ylabel('Valori')
         plt.title('Grafico della Moda')
-    elif opzione == "fibonacci" or opzione == "4":
+    elif opzione == "dev" or opzione == "4":
+        # Aggiungi il codice per il grafico basato sulla deviazione standard
+        #std_dev = calcola_deviazione_standard(dati)
+        plt.plot(dati, marker='o', label='Dati di Input')
+        plt.axhline(y=calcola_deviazione_standard(dati), color='r', linestyle='--', label='Deviazione Standard')
+        plt.legend()
+        plt.xlabel('Indice')
+        plt.ylabel('Valori')
+        plt.title('Grafico dei Dati con Deviazione Standard')
+        plt.show()
+    elif opzione == "fibonacci":
         # Aggiungi il codice per generare e visualizzare la sequenza di Fibonacci
         n = int(input("Inserisci il numero massimo di elementi per la sequenza di Fibonacci: "))
         fibonacci_sequence = genera_fibonacci(n)
@@ -152,11 +176,14 @@ def main():
         print("2. Calcola media")
         print("3. Calcola mediana")
         print("4. Calcola moda")
-        print("5. Mostra grafico")
+        print("5. Calcola deviazione standard")
+        
         print("6. Genera sequenza di Fibonacci")
         print("7. Genera sequenza numeri Primi")
         print("8. Genera sequenza esponenziale")
+
         print("0. Cancella tutti i dati")
+        print("g. Mostra grafico")
         print("x. Esci")
 
         scelta = input("Scelta: ")
@@ -170,15 +197,22 @@ def main():
         elif scelta == "4":
             print(f"Moda: {calcola_moda(dati)}")
         elif scelta == "5":
-            formato = input("Scegli il formato del grafico (barre : 1, circolare : 2, cartesiano : 3, istogramma : 4): ")
-            opzione = input("Vuoi visualizzare il grafico dei dati di input o uno dei grafici calcolati? (dati_input :0 , media : 1, mediana : 2, moda : 3): ")
-            mostra_grafico(dati, formato, opzione)
+            # Calcola deviazione standard
+            dev_std = calcola_deviazione_standard(dati)
+            if dev_std is not None:
+                print(f"Deviazione Standard: {dev_std:.2f}")
+            else:
+                print("Almeno due dati sono necessari per calcolare la deviazione standard.")
         elif scelta == "6":
             mostra_grafico(dati, None, "fibonacci")
         elif scelta == "7":
             mostra_grafico(dati, None, "primi")
         elif scelta == "8":
             mostra_grafico(dati, None, "esponenziale")
+        elif scelta.lower() == "g":
+            formato = input("Scegli il formato del grafico (barre : 1, circolare : 2, cartesiano : 3, istogramma : 4): ")
+            opzione = input("Scegli cosa visualizzare (dati_input : 0 , media : 1, mediana : 2, moda : 3, dev : 4): ")
+            mostra_grafico(dati, formato, opzione)            
         elif scelta == "0":
             conferma = input("Sei sicuro di voler cancellare tutti i dati? (s/n): ")
             if conferma.lower() == "s":
