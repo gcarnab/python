@@ -41,5 +41,4 @@ while True:
 
 # When everything done, release resources and destroy the windows
 cap.release()
-writer.release()
 cv2.destroyAllWindows()
