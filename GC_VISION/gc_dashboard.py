@@ -24,7 +24,7 @@ menu_bar = tk.Menu(app)
 # Create a file menu
 file_menu = tk.Menu(menu_bar, tearoff=0)
 file_menu.add_command(label='Draw Shapes', command=lambda: menu_click('gc_draw_shapes'))
-file_menu.add_command(label='Module 2', command=lambda: menu_click('module2'))
+file_menu.add_command(label='User Interaction', command=lambda: menu_click('gc_user_interaction'))
 file_menu.add_command(label='Module 3', command=lambda: menu_click('module3'))
 file_menu.add_separator()
 file_menu.add_command(label='Exit', command=app.quit)

@@ -1,5 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
+from GCWebScraper import WebScraper
+
+########### GLOBAL VARIABLES ###########
+
+url_to_scrape = None
+
+########################################
+
+# Funzione per impostare l'URL
+def imposta_url():
+    global url_to_scrape
+    url_to_scrape = input("Inserisci l'URL della pagina: ")
+    print(f"\n>>>>> URL PAGINA MEMORIZZATO :  {url_to_scrape}")
 
 def get_title(url):
     response = requests.get(url)
@@ -13,22 +26,32 @@ def get_title(url):
 def main_menu():
     print("\n<<<<< GC WEB SCRAPER >>>>>")
     print("Scegli un'opzione:")
-    print("1. Ottenere il titolo di una pagina web")
-    print("2. TODO")
+    print("0. Inserisci url pagina web")
+    print("1. Scarica pagina web")
+    print("2. Estrai titolo della pagina")
     print("3. TODO")
     print("x. Exit")
+
 
 def main():
     while True:
         main_menu()
         choice = input("Inserisci il numero dell'opzione desiderata: ")
-
-        if choice == '1':
-            url = input("Inserisci l'URL della pagina web: ")
-            title = get_title(url)
-            print(f'Titolo della pagina: {title}')
+        
+        if choice == '0':
+            imposta_url()
+        elif choice == "1":
+            if url_to_scrape is None:
+                imposta_url()
+            else :
+                scraper = WebScraper(url_to_scrape)
+                scraper.scarica_pagina()                       
         elif choice == "2":
-            pass          
+            if url_to_scrape is None:
+                imposta_url()
+            else :
+                scraper = WebScraper(url_to_scrape)
+                scraper.getTitle()             
         elif choice == "3":
             pass           
         elif choice == "4":
