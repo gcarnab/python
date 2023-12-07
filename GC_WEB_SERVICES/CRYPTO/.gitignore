@@ -1,0 +1,6 @@
+.vscode/
+__pycache__/
+*.pyc
+**/*.pyc
+DATA/
+secrets.py
