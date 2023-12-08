@@ -1,53 +1,56 @@
 import turtle
 import random
 
+# funzione che disegna il cielo
 def disegna_cielo(screen_width,screen_height, fill_color):
     turtle.penup()  
-    turtle.goto(-(screen_width - 10)/2, (screen_height - 10 )/2)
-    turtle.pencolor("black")
-    turtle.write(turtle.pos())
+    turtle.goto(-screen_width/2, screen_height/2)
+    #turtle.pencolor("black")
+    #turtle.write(turtle.pos())
     turtle.pencolor(fill_color)
     turtle.color(fill_color)
     turtle.pendown()
     turtle.begin_fill()
     for _ in range(2):
-        turtle.forward(screen_width - 15)
+        turtle.forward(screen_width)
         turtle.right(90)
         #turtle.pencolor("black")
         #turtle.write(turtle.pos())
         #turtle.pencolor(fill_color)
-        turtle.forward(screen_height/1.5)
+        turtle.forward(screen_height - screen_height/4)
         turtle.right(90)
         #turtle.pencolor("black")
         #turtle.write(turtle.pos())
         #turtle.pencolor(fill_color)
     turtle.end_fill()
 
+# funzione che disegna l'erba
 def disegna_erba(screen_width,screen_height, fill_color):
     turtle.penup()
-    turtle.goto(-(screen_width/2 - 5), - screen_height/5.6)
+    turtle.goto(-screen_width/2, - screen_height/4)
     turtle.color(fill_color)
     turtle.pendown()
     turtle.begin_fill()
     for _ in range(2):
-        turtle.forward(screen_width - 15)
+        turtle.forward(screen_width)
         turtle.right(90)
         #turtle.pencolor("black")
         #turtle.write(turtle.pos())
         #turtle.pencolor(fill_color)
-        turtle.forward(screen_height/3.3)
+        turtle.forward(screen_height/4)
         turtle.right(90)
         #turtle.pencolor("black")
         #turtle.write(turtle.pos())
         #turtle.pencolor(fill_color)
     turtle.end_fill()
 
-def disegna_prato(screen_width, screen_height):
+# funzione che disegna il prato
+def disegna_prato(screen_width, screen_height, fill_color):
     turtle.penup()
     #turtle.home()
-    turtle.goto(-(screen_width/2 - 5), - screen_height/5.6)
+    turtle.goto(-(screen_width/2), - screen_height/4)
     turtle.pendown()
-    turtle.color("lightgreen")
+    turtle.color(fill_color)
     turtle.begin_fill()
     grass_range = int(screen_width/10)
     for _ in range(grass_range):
@@ -57,21 +60,25 @@ def disegna_prato(screen_width, screen_height):
         turtle.forward(10)    
     turtle.end_fill()
 
+# funzione che disegna il sole
 def disegna_sole(screen_width, screen_height, fill_color, rays_flag):
     turtle.penup()
-    turtle.goto(-screen_width / 3, screen_height / 3.2)
+    sun_x = - screen_width / 4
+    sun_y = screen_height / 4
+    radius = 50
+    turtle.goto(sun_x, sun_y)
     turtle.pendown()
     
     # Disegna il cerchio del sole
     turtle.color(fill_color)
     turtle.begin_fill()
-    turtle.circle(50)
+    turtle.circle(radius)
     turtle.end_fill()
 
     if rays_flag :
         # Disegna i raggi attorno al cerchio del sole
         turtle.penup()
-        turtle.goto(-screen_width / 3, screen_height / 3.2 + 50)
+        turtle.goto(sun_x, sun_y + radius )
         turtle.pendown()
         turtle.color("yellow")  # Puoi cambiare il colore dei raggi se lo desideri
         
@@ -80,9 +87,29 @@ def disegna_sole(screen_width, screen_height, fill_color, rays_flag):
             turtle.backward(70)
             turtle.left(10)  # Angolo tra i raggi
 
+# funzione che disegna una spirale
+def disegna_spirale(screen_width, screen_height, radius, fill_color) :
+    turtle.penup()
+    turtle.goto(screen_width/5, screen_height/5)
+    turtle.pendown()
+    turtle.pencolor(fill_color)
+    turtle.pensize(2)
+    
+    # Loop for printing spiral circle 
+    for i in range(50): 
+        turtle.circle(radius + i, 50) 
+
+    # Loop for printing concentric circles 
+    #for i in range(10): 
+    #    turtle.circle(radius * i) 
+    #    turtle.up() 
+    #    turtle.sety((radius * i)*(-1)) 
+    #    turtle.down() 
+
+# funzione che disegna una nuvola
 def disegna_nuvola(screen_width, screen_height, raggio, numero_curve, lunghezza_curva,fill_flag):
     turtle.penup()
-    turtle.goto(screen_width/3 + 10 , screen_height/3 + 10)
+    turtle.goto(screen_width/3, screen_height/3)
     turtle.pendown()
     turtle.color("white")
     if fill_flag :
@@ -104,6 +131,7 @@ def disegna_nuvola(screen_width, screen_height, raggio, numero_curve, lunghezza_
     if fill_flag :
             turtle.end_fill()  # Completa il riempimento
 
+# funzione che disegna una casa
 def disegna_casa(screen_width, screen_height):
 
     # disegno corpo
@@ -152,11 +180,12 @@ def disegna_casa(screen_width, screen_height):
         turtle.left(120)
     turtle.end_fill()
 
+# funzione che disegna una albero
 def disegna_albero(screen_width,screen_height):
 
     # disegno tronco
     turtle.penup()
-    turtle.goto(-200, -50)
+    turtle.goto(-screen_width/3, -screen_height/6)
     turtle.pendown()
     turtle.color("brown")
     turtle.begin_fill()
@@ -169,26 +198,26 @@ def disegna_albero(screen_width,screen_height):
     
     #disegno chioma
     turtle.penup()
-    turtle.goto(-195, -85)
+    turtle.goto(-screen_width/3 + 5, -screen_height/6)
     turtle.pendown()
     turtle.color("green")
     turtle.begin_fill()
-    turtle.circle(30)
+    turtle.circle(40)
     turtle.end_fill()
 
+# funzione che disegna una mucca
 def disegna_mucca(screen_width,screen_height, fill_color):
-
-    turtle.color(fill_color)
 
     # Testa della mucca
     turtle.penup()
-    turtle.goto(-100, -150)
+    turtle.goto(-screen_width/3.6 , -screen_height/4)
+    turtle.color(fill_color)
     turtle.pendown()
     turtle.circle(10)
 
     # Corpo della mucca
     turtle.penup()
-    turtle.goto(-100, -150)
+    turtle.goto(-screen_width/3.6 , -screen_height/4)
     turtle.pendown()
     for _ in range(2):
         turtle.forward(60)
@@ -198,7 +227,7 @@ def disegna_mucca(screen_width,screen_height, fill_color):
 
     # disegno gamba    
     turtle.penup()    
-    turtle.goto(-90, -170)
+    turtle.goto(-screen_width/3.6 , -screen_height/3.5)
     turtle.pendown()
     for _ in range(2):
         turtle.forward(5)
@@ -208,7 +237,7 @@ def disegna_mucca(screen_width,screen_height, fill_color):
 
     # disegno gamba    
     turtle.penup()    
-    turtle.goto(-60, -170)
+    turtle.goto(-screen_width/4.6 , -screen_height/3.5)
     turtle.pendown()
     for _ in range(2):
         turtle.forward(5)
@@ -218,9 +247,9 @@ def disegna_mucca(screen_width,screen_height, fill_color):
 
     # Macchie della mucca
     turtle.penup()
-    turtle.goto(-90, -165)
-    turtle.pendown()
+    turtle.goto(-screen_width/3.8 , -screen_height/3.6)
     turtle.color("black")
+    turtle.pendown()
     turtle.begin_fill()
     for _ in range(3):
         turtle.circle(5)
@@ -229,147 +258,127 @@ def disegna_mucca(screen_width,screen_height, fill_color):
         turtle.pendown()
     turtle.end_fill()
 
-def disegna_albero_natale(x, y, screen_width, screen_height):
-    lunghezza_tronco = 50
-    lunghezza_rami = 350
+def disegna_albero_natale(screen_width, screen_height, base, balls_flag):
 
+    # Disegna il triangolo più grande.
+    turtle.pencolor("lightgreen")
     turtle.penup()
-    turtle.goto(x, y)
+    turtle.goto(-screen_width/4 , -screen_height/4)        
+    turtle.begin_fill()
+    turtle.fillcolor("green")
     turtle.pendown()
+    for _ in range(3):
+        turtle.forward(base)
+        turtle.left(120)
+        turtle.forward(base)
+    turtle.end_fill()
+    if balls_flag :
+        disegna_pallina(10)
+        turtle.penup()
+        turtle.goto(-screen_width/4 + 25, -screen_height/4)  
+        disegna_pallina(10)
 
-    # Tronco
-    turtle.color("saddlebrown")
+    # Disegna il triangolo medio
+    turtle.penup()
+    turtle.goto(-screen_width/4 , -screen_height/4 + base)   
+    turtle.pendown()   
+    turtle.fillcolor("green")
+    turtle.begin_fill()  
+    base = base / 1.2   
+    for _ in range(3):
+        turtle.forward(base)
+        turtle.left(120)
+        turtle.forward(base)
+    turtle.end_fill()
+    if balls_flag :
+        disegna_pallina(10)
+        turtle.penup()
+        turtle.goto(-screen_width/4 + 25, -screen_height/4 + base)   
+        disegna_pallina(10)
+
+    # Disegna il triangolo piccolo
+    turtle.penup()
+    turtle.goto(-screen_width/4 , -screen_height/4 + base*2.5)   
+    turtle.pendown()   
+    turtle.fillcolor("green")
+    turtle.begin_fill()  
+    base = base / 2   
+    for _ in range(3):
+        turtle.forward(base)
+        turtle.left(120)
+        turtle.forward(base)
+    turtle.end_fill()
+    if balls_flag :
+        disegna_pallina(10)
+        turtle.penup()
+        turtle.goto(-screen_width/4 + 25, -screen_height/4 + base*4)   
+        disegna_pallina(10)
+
+    # disegno tronco
+    turtle.penup()
+    turtle.goto(-screen_width/3.9, -screen_height/4)
+    turtle.pendown()
+    turtle.color("brown")
     turtle.begin_fill()
     for _ in range(4):
-        turtle.forward(lunghezza_tronco)
+        turtle.forward(15)
+        turtle.right(90)
+        turtle.forward(50)
         turtle.right(90)
     turtle.end_fill()
 
-    # Fronde
-    turtle.color("green")
+def disegna_pallina(radius):
+    turtle.pendown()
+    colore = random.choice(["yellow", "blue", "gold", "purple", "lightgreen", "black", "grey"])
+    turtle.fillcolor(colore)
     turtle.begin_fill()
-    turtle.right(90)
-    disegna_ramo(lunghezza_rami, 60)
-    turtle.left(120)
-    disegna_ramo(lunghezza_rami, 60)
-    turtle.left(120)
-    disegna_ramo(lunghezza_rami, 60)
+    turtle.circle(radius)
     turtle.end_fill()
 
-def disegna_ramo(lunghezza, angolo):
-    if lunghezza < 5:
-        return
-    else:
-        turtle.forward(lunghezza)
-        turtle.right(angolo)
-        disegna_ramo(lunghezza - 15, angolo)
-        turtle.left(2 * angolo)
-        disegna_ramo(lunghezza - 15, angolo)
-        turtle.right(angolo)
-        turtle.backward(lunghezza)
-
-def disegna_palline(x, y, numero_palline, dimensione_palline):
+def disegna_pacchi(screen_width, screen_height, numero_pacchi, dimensioni_pacchi):
     turtle.penup()
-    turtle.goto(x, y)
-    turtle.pendown()
-
-    for _ in range(numero_palline):
-        colore = random.choice(["red", "green", "blue", "gold", "purple"])
-        turtle.color(colore)
-        turtle.begin_fill()
-        turtle.circle(dimensione_palline)
-        turtle.end_fill()
-        turtle.penup()
-        turtle.forward(50)
-        turtle.pendown()
-
-def disegna_pacchi(x, y, numero_pacchi, dimensioni_pacchi):
-    turtle.penup()
-    turtle.goto(x, y)
+    turtle.goto(-screen_width/3, -screen_height/3)
     turtle.pendown()
 
     for _ in range(numero_pacchi):
-        colore = random.choice(["red", "green", "blue"])
+        colore = random.choice(["red", "lightgreen", "blue", "yellow"])
         lunghezza, larghezza, altezza = dimensioni_pacchi
-        turtle.color(colore)
+        turtle.fillcolor(colore)
+        turtle.pencolor("black")
         turtle.begin_fill()
         for _ in range(4):
             turtle.forward(lunghezza)
             turtle.left(90)
         turtle.end_fill()
         turtle.penup()
-        turtle.forward(50)
+        turtle.forward(35)
         turtle.pendown()
 
-def disegna_albero_abete(screen_width, screen_height, altezza_abete):
-    turtle.penup()
-    turtle.goto(0, 0)
-    turtle.pendown()
 
-    # Tronco
-    turtle.color("saddlebrown")
-    turtle.begin_fill()
-    for _ in range(2):
-        turtle.forward(altezza_abete / 4)
-        turtle.right(90)
-        turtle.forward(altezza_abete)
-        turtle.right(90)
-    turtle.end_fill()
-
-    # Fronde a forma di piramide
-    disegna_piramide(0, screen_height + altezza_abete, altezza_abete * 2, 3)
-
-def disegna_piramide(x, y, altezza, livelli):
-    angolo_base = 0  # Calcolo dell'angolo per orientare i triangoli
-    turtle.penup()
-    turtle.goto(x, y - altezza / 2)
-    turtle.pendown()
-
-    for i in range(livelli, 0, -1):
-        colore = random.choice(["red", "green", "blue", "gold", "purple"])
-        turtle.color(colore)        
-        turtle.begin_fill()
-        disegna_triangolo(altezza * (i / livelli))
-        turtle.goto(x + altezza / 3, (y - altezza / 2) + altezza)
-        turtle.right(90)  # Riporta la tartaruga alla posizione originale
-        turtle.end_fill()
-        turtle.forward(altezza / livelli)
-        turtle.left(angolo_base)
-
-def disegna_triangolo(lato):
-    turtle.penup()
-    for _ in range(3):
-        turtle.forward(lato)
-        turtle.left(120)
 
 def main():
 
     #=== SETTINGS ===
     turtle.speed(0)
-    screen_width=800
-    screen_height=600
+    screen_width=640
+    screen_height=480
     turtle.setup(width=screen_width,height=screen_height)
-    #turtle.setup(width=700,height=700)
-
+    turtle.Screen().title("GC Landscape")
+    
     #=== FIGURES ===
-    #disegna_cielo(screen_width,screen_height, "blue")
-    #disegna_erba(screen_width,screen_height, "green")
-    '''
-    disegna_prato(screen_width, screen_height)
+    disegna_cielo(screen_width,screen_height, "blue")
+    disegna_erba(screen_width,screen_height, "green")
+    disegna_prato(screen_width, screen_height,"lightgreen")
     disegna_sole(screen_width,screen_height, "yellow", True)
-    disegna_nuvola(screen_width,screen_height, 30, 5, 10, False)
+    #disegna_spirale(screen_width,screen_height, 5, "orange")
+    disegna_nuvola(screen_width,screen_height, 30, 10, 10, False)
     disegna_nuvola(screen_width,screen_height, 30, 10, 20, False)
     disegna_nuvola(screen_width,screen_height, 30, 15, 30, False)
     disegna_casa(screen_width,screen_height)
-    disegna_albero(screen_width,screen_height)
-    disegna_mucca(screen_width,screen_height, "white")
-    '''
-
-    #disegna_albero_natale(0, -screen_height/2 + 50, screen_width, screen_height)
-    #disegna_palline(0, -screen_height/2 + 200, 5, 10)
-    #disegna_pacchi(0, -screen_height/2 + 350, 3, (30, 20, 15))
-
-    disegna_albero_abete(0, 0, 100)
+    #disegna_albero(screen_width,screen_height)
+    #disegna_mucca(screen_width,screen_height, "white")
+    disegna_albero_natale(screen_width,screen_height,50, True)
+    disegna_pacchi(screen_width,screen_height, 3, (20, 20, 20))
 
     # mostra centro assi
     turtle.penup()
