@@ -1,7 +1,4 @@
 # Libreria Crypto API Service by GC
-
-import requests
-
 import requests
 
 class GCCryptoService:
