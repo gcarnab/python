@@ -1,0 +1,52 @@
+import folium
+
+data_base_path = "GC_WEB_SERVICES/MAPS/DATA/"
+
+point_coords = [45.72369206943886, 9.07560422018417]
+point_lat = 45.72369206943886
+point_lon = 9.07560422018417
+
+# Imposta la posizione della mappa
+mappa = folium.Map(location=point_coords, zoom_start=16)
+
+# Aggiungi un punto alla mappa
+folium.Marker(point_coords , 
+              icon=folium.Icon(icon='info-sign'), 
+              popup='Questa è la mia posizione').add_to(mappa)
+
+# Create a custom tile layer with an attribution
+#attribution = {'url': 'https://cartodb.com/attributions/', 'title': 'CartoDB', 'license': 'CC BY 3.0'}
+
+#folium.TileLayer(attribution=attribution).add_to(mappa)
+
+#layer_control = folium.LayerControl()
+
+# Aggiungi una legenda alla mappa
+folium.LayerControl().add_to(mappa)
+
+# Aggiungi un layer satellite alla mappa
+#folium.TileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpd29qb294b2Fubm93a3M5IiwiaWQiOjF9.sn3_h55_t6-_t51u_y6b-Q').add_to(mappa)
+
+#mappa.add_child(layer_control)
+
+# Aggiungi una linea alla mappa
+folium.PolyLine([
+    [point_lat , point_lon],
+    [45.72436185566933, 9.076967607814394],
+    [45.723559873839264, 9.076235418161124],
+    [point_lat , point_lon] 
+]).add_to(mappa)
+
+'''
+# Aggiungi un rettangolo alla mappa
+folium.Rectangle([
+    [41.8800, 12.5000],
+    [41.9200, 12.5400]
+]).add_to(mappa)
+'''
+
+# Save the map to HTML
+mappa.save(data_base_path + 'osm.html')
+
+# Visualizza la mappa
+#mappa.show()
