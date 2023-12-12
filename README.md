@@ -5,3 +5,5 @@ By GCARNAB <a href='https://github.com/gcarnab'> <img src='https://avatars.githu
 ___
 
 ## Contents
+- GC_FIN_DASH : Folder containing a Financial Dashboard in python using Dash library
+- GC_ML : Folder containing Machine Learning Repository
