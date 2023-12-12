@@ -1,5 +1,4 @@
 import requests
-import json
 from requests import Request, Session
 from requests.exceptions import RequestException
 from GCCryptoService import GCCryptoService
@@ -43,45 +42,32 @@ class CoinAPICryptoService(GCCryptoService):
         response = requests.request("GET", url, headers=headers, data=payload)        
         return response.text
 
-    def get_time_series(self,  asset_id_base, asset_id_quote, period_id, time_start, time_end):
-        base_url = "https://rest.coinapi.io/v1/exchangerate/"
-        params_01 = asset_id_base + "/" + asset_id_quote  
-        params_02 = "/history?period_id=" + period_id + "&time_start=" + time_start + "&time_end=" + time_end
-        url = base_url + params_01 + params_02
-        print(url)
+    def get_historical_data(self, symbol_id):
+        """Get the current price of a cryptocurrency using CoinAPI."""
+        url = "https://rest.coinapi.io/v1/quotes/" + symbol_id + "/history"
         payload={}
         headers = {
         'Accept': 'application/json',
         'X-CoinAPI-Key': self.api_key
         }
-        #response = requests.get(url)
-        response = requests.request("GET", url, headers=headers, data=payload)
-        if response.status_code == 200:
-            data = json.loads(response.content)
-            return data
-        else:
-            raise Exception("Errore durante la richiesta delle API di CoinAPI")
 
-    def get_historical_price(self, start_date, end_date):
-        url = f"{self.base_url}/ohlcv/BTC/USD/history"
-        params = {
-            "start_date": start_date,
-            "end_date": end_date,
-            "apiKey": self.api_key
+        response = requests.request("GET", url, headers=headers, data=payload)        
+        return response.text
+    
+    def get_historical_price(self, currency, start_date, end_date):
+        """Get historical price data for a cryptocurrency using CoinAPI."""
+        data = {
+            'symbol': currency,
+            'start': start_date,
+            'end': end_date,
         }
+        response = self._make_request('exchangerates/historical', data)
 
-        try:
-            response = requests.get(url, params=params)
-            response.raise_for_status()  # Genera un'eccezione per errori HTTP
+        price_data = []
+        for point in response['bpi']:
+            if point:
+                timestamp = point['time']
+                price = point['rate']
+                price_data.append({'timestamp': timestamp, 'price': price})
 
-            data = response.json()
-            return data
-
-        except requests.exceptions.HTTPError as errh:
-            print(f"HTTP Error: {errh}")
-        except requests.exceptions.ConnectionError as errc:
-            print(f"Error Connecting: {errc}")
-        except requests.exceptions.Timeout as errt:
-            print(f"Timeout Error: {errt}")
-        except requests.exceptions.RequestException as err:
-            print(f"Ooops: Something went wrong {err}")
+        return price_data
