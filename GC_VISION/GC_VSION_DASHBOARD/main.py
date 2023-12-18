@@ -15,7 +15,7 @@ class CanvasWithBorder(tk.Frame):
         self.label_title.pack(side=tk.TOP, padx=10, pady=5)
         
         # Create the canvas
-        self.canvas = tk.Canvas(self, width=300, height=200, borderwidth=2, relief="solid")  
+        self.canvas = tk.Canvas(self, width=200, height=150, borderwidth=2, relief="solid")  
         # Adjust the width and height as needed
         self.canvas.pack(side=tk.TOP, padx=10, pady=10)
 
@@ -24,9 +24,10 @@ class OpenCVDashboard:
     def __init__(self, root):
         self.root = root
         self.root.title("GC Vision Dashboard Rel.(1.0)")
+
         # Set the dimensions of the main window
-        window_width = 1500  # Change this to your desired width
-        window_height = 600  # Change this to your desired height
+        window_width = 1000  # Change this to your desired width
+        window_height = 480  # Change this to your desired height
         self.root.geometry(f"{window_width}x{window_height}")
 
         # Allow the window to be resizable
@@ -35,7 +36,7 @@ class OpenCVDashboard:
         # Initialize OpenCV camera
         self.cap = cv2.VideoCapture(0)
 
-        # Create an instance of TemplateMatching
+        # Create instances for Modules
         self.template_matching = TemplateMatching()
 
         # Create menu
@@ -76,6 +77,20 @@ class OpenCVDashboard:
         # Start video stream
         self.show_frame()
 
+    def option1_callback(self):
+        print("Option 1 selected")
+
+    def option2_callback(self):
+        print("Option 2 selected")
+
+    def create_edge_detection_tab(self):
+        # TODO: Implement edge detection tab
+        pass
+
+    def create_object_detection_tab(self):
+        # TODO: Implement object detection tab
+        pass
+    
     def show_frame(self):
         ret, frame = self.cap.read()
 
