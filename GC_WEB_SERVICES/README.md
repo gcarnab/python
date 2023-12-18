@@ -6,7 +6,10 @@ ___
 
 ## Contents :
 
-- CRYPTO : folder containing web service for crypto data
-- SCRAPING : web service client for web scraping
+- CRYPTO : folder containing web services for crypto api
+- MAPS : folder containing web services for maps api
+- SCRAPING : folder containing web services for web scraping
+- TELEGRAM : folder containing web services for telegram api
+
 
 
