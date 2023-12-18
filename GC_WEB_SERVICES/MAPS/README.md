@@ -9,11 +9,17 @@ By GCARNAB <a href='https://github.com/gcarnab'> <img src='https://avatars.githu
 ## Contents
 
 - gc_osm.py : using OpenStreeMap
--
--
 
 ## Resources
 
+- https://openrouteservice.org/
 - https://wiki.openstreetmap.org/wiki/API_v0.6
 - https://python-visualization.github.io/folium/latest/
 - https://plotly.com/python/getting-started/
+
+## Usage
+
+- pip install requests
+- pip install folium
+- pip install plotly
+- pip install pandas

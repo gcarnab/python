@@ -6,14 +6,15 @@ ___
 
 ## Contents
 
-- main.py : run python program
+- main.py : main file for scraping services
+- GCWebScraper.py : class for scraping services
 
 ## Resources
 
-- 
+- https://realpython.com/python-web-scraping-practical-introduction/
+- https://www.learndatasci.com/tutorials/ultimate-guide-web-scraping-w-python-requests-and-beautifulsoup/
 
 ## Usage
 
 - pip install requests
 - pip install beautifulsoup4
-- 

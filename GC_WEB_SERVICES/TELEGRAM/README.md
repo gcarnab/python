@@ -6,7 +6,8 @@ ___
 
 ## Contents
 
-- 
+- main.py : main file for telegram api bot
+- GCTelegramService.py : class for telegram api bot
 
 ## Resources
 
