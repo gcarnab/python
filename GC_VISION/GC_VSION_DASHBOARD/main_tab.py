@@ -16,10 +16,14 @@ class GCVisionDashboard:
         # Create a GCVisionService instance
         self.vision_service = GCVisionService()
 
-        ##### SETTINGS VARIABLES #####
+        ##### FEATURES SETTINGS VARIABLES #####
         self.use_live_view_for_detection = tk.BooleanVar()
         self.use_live_view_for_detection.set(False)
         self.blur_ksize = tk.IntVar(value=5)  # Initial value for ksize
+        self.grid_width = tk.IntVar(value=7)
+        self.grid_height = tk.IntVar(value=7)
+
+        #######################################
 
         self.initial_folder = "C:/GCDATA/DEV/vscode-workspace/python/GC_VISION/GC_VSION_DASHBOARD/data"
 
@@ -48,10 +52,13 @@ class GCVisionDashboard:
 
         # Add buttons or other widgets as menu items
         button2 = ttk.Button(self.menu_frame, text="Edge Detection", command=self.edge_detection_callback)
-        button2.pack(pady=10,side=tk.LEFT)
+        button2.pack(pady=5,side=tk.LEFT)
 
         button3 = ttk.Button(self.menu_frame, text="Template Matching", command=self.template_matching_callback)
-        button3.pack(pady=10,side=tk.LEFT)
+        button3.pack(pady=5,side=tk.LEFT)
+
+        button4 = ttk.Button(self.menu_frame, text="Grid Detection", command=self.grid_detection_callback)
+        button4.pack(pady=5,side=tk.LEFT)
 
         # Create a Frame for canvases on Tab1
         self.content_frame  = ttk.Frame(self.tab1,padding=(1, 1, 1, 1), relief="solid", borderwidth=2)
@@ -108,6 +115,10 @@ class GCVisionDashboard:
         use_live_view_checkbox = ttk.Checkbutton(self.settings_frame, text="Use Live View", variable=self.use_live_view_for_detection)
         use_live_view_checkbox.pack(pady=5, anchor=tk.W)
 
+        # Button to apply settings
+        apply_settings_button = ttk.Button(self.settings_frame, text="Apply Settings", command=self.apply_settings)
+        apply_settings_button.pack(side=tk.LEFT, padx=5)
+
         # Add radio buttons for detection features
         self.selected_feature = tk.StringVar()
         self.selected_feature.set("edge_detection")  # Set the default feature
@@ -120,24 +131,46 @@ class GCVisionDashboard:
 
         # Create a LabelFrame for Edge Detection settings
         self.edge_detection_frame = ttk.LabelFrame(self.tab2, text="Edge Detection Settings", width=self.canvas_width, height=self.canvas_height, padding=(1, 1, 1, 1))
-        self.edge_detection_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.edge_detection_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Add settings widgets inside edge_detection_frame
         self.ksize_label = ttk.Label(self.edge_detection_frame, text="Blur Kernel Size (ksize):")
         self.ksize_label.grid(row=0, column=0, pady=5, padx=5)
 
         # Slider for controlling ksize
-        self.ksize_slider = ttk.Scale(self.edge_detection_frame, from_=0, to=10, variable=self.blur_ksize, orient=tk.HORIZONTAL, length=200, command=self.update_ksize_label)
+        self.ksize_slider = ttk.Scale(self.edge_detection_frame, from_=1, to=10, variable=self.blur_ksize, orient=tk.HORIZONTAL, length=50, command=self.update_ksize_label)
         self.ksize_slider.grid(row=0, column=1, pady=5, padx=5)
 
         # Label to display ksize value
-        self.ksize_value_label = ttk.Label(self.edge_detection_frame, text=f"Current ksize: {self.blur_ksize.get()}")
+        self.ksize_value_label = ttk.Label(self.edge_detection_frame, text=f"Current: {self.blur_ksize.get()}")
         self.ksize_value_label.grid(row=0, column=2, pady=5, padx=5)
 
-        # Button to apply settings
-        apply_settings_button = ttk.Button(self.edge_detection_frame, text="Apply Settings", command=self.apply_settings)
-        apply_settings_button.grid(row=1, column=0, columnspan=2, pady=10)
+        # Create a LabelFrame for Template Matching settings
+        self.template_matching_frame = ttk.LabelFrame(self.tab2, text="Template Matching Settings", width=self.canvas_width, height=self.canvas_height, padding=(1, 1, 1, 1))
+        self.template_matching_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
+        # Create a LabelFrame for Grid Detection settings
+        self.grid_detection_frame = ttk.LabelFrame(self.tab2, text="Grid Detection Settings", width=self.canvas_width, height=self.canvas_height, padding=(1, 1, 1, 1))
+        self.grid_detection_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        # Add settings widgets inside Grid Detection
+        self.grid_width_label = ttk.Label(self.grid_detection_frame, text="Grid Width :")
+        self.grid_width_label.grid(row=0, column=0, pady=5, padx=5)
+        # Slider 
+        self.grid_width_slider = ttk.Scale(self.grid_detection_frame, from_=1, to=10, variable=self.grid_width, orient=tk.HORIZONTAL, length=50, command=self.update_grid_width_label)
+        self.grid_width_slider.grid(row=0, column=1, pady=5, padx=5)
+        # Label to display slider values
+        self.grid_width_value_label = ttk.Label(self.grid_detection_frame, text=f"Current: {self.grid_width.get()}")
+        self.grid_width_value_label.grid(row=0, column=2, pady=5, padx=5)
+
+        self.grid_height_label = ttk.Label(self.grid_detection_frame, text="Grid Height :")
+        self.grid_height_label.grid(row=1, column=0, pady=5, padx=5)
+        # Slider 
+        self.grid_height_slider = ttk.Scale(self.grid_detection_frame, from_=1, to=10, variable=self.grid_height, orient=tk.HORIZONTAL, length=50, command=self.update_grid_height_label)
+        self.grid_height_slider.grid(row=1, column=1, pady=5, padx=5)
+        # Label to display slider values
+        self.grid_height_value_label = ttk.Label(self.grid_detection_frame, text=f"Current: {self.grid_height.get()}")
+        self.grid_height_value_label.grid(row=1, column=2, pady=5, padx=5)
 
         ####### Open the video stream #######
         self.cap = cv2.VideoCapture(0)
@@ -225,15 +258,12 @@ class GCVisionDashboard:
         if self.log_flag :
             print("template_matching_callback selected")
 
-        # Call the edge_detection method from GCVisionService
         template_path = filedialog.askopenfilename(initialdir=self.initial_folder, title="Select Template Image",
                                                 filetypes=(("Image files", "*.png;*.jpg;*.jpeg"), ("All files", "*.*")))
         
-        # Call the edge_detection method from GCVisionService
         full_image_path = filedialog.askopenfilename(initialdir=self.initial_folder, title="Select Full Image",
                                                 filetypes=(("Image files", "*.png;*.jpg;*.jpeg"), ("All files", "*.*")))
-        
-        
+               
         if template_path and full_image_path:
             # Perform edge detection and display the result in image_processing_canvas
             result = self.vision_service.match_template(template_path, full_image_path , self.image_processing_canvas, self.image_source_canvas)
@@ -241,6 +271,25 @@ class GCVisionDashboard:
             # Display the detection result on canvas
             self.display_image_on_canvas(template_image, self.image_source_canvas)
             self.display_image_on_canvas(heatmap_image, self.image_processing_canvas)    
+
+    def grid_detection_callback(self):
+        if self.log_flag :
+            print("grid_detection_callback selected")
+
+        image_path = filedialog.askopenfilename(initialdir=self.initial_folder, title="Select Grid Image",
+                                                filetypes=(("Image files", "*.png;*.jpg;*.jpeg"), ("All files", "*.*")))
+        
+        #full_image_path = filedialog.askopenfilename(initialdir=self.initial_folder, title="Select Full Image",
+        #                                        filetypes=(("Image files", "*.png;*.jpg;*.jpeg"), ("All files", "*.*")))
+        
+        
+        if image_path :
+            # Perform grid detection and display the result in image_processing_canvas
+            result_image = self.vision_service.grid_detection(image_path , self.image_processing_canvas, self.image_source_canvas)
+
+            # Display the detection result on canvas
+            #self.display_image_on_canvas(image_path, self.image_source_canvas)
+            self.display_image_on_canvas(result_image, self.image_processing_canvas) 
 
     def display_image_on_canvas(self, image, canvas):
         if self.log_flag :
@@ -257,17 +306,25 @@ class GCVisionDashboard:
         canvas.create_image(0, 0, anchor=tk.NW, image=photo)
         canvas.photo = photo
 
+    ############# SETTINGS LABELS VALUES ###########
+        
     def update_ksize_label(self, value):
-        # Update the label displaying ksize value
-        self.ksize_value_label.config(text=f"Current ksize: {self.blur_ksize.get()}")
+        self.ksize_value_label.config(text=f"Current: {self.blur_ksize.get()}")
+
+    def update_grid_width_label(self, value):
+        self.grid_width_value_label.config(text=f"Current: {self.grid_width.get()}")
+
+    def update_grid_height_label(self, value):
+        self.grid_height_value_label.config(text=f"Current: {self.grid_height.get()}")
 
     def apply_settings(self):
         if self.log_flag :
             print("apply_settings selected")
 
-        # Get the current value of ksize from the slider
-        print("apply_settings self.blur_ksize.get()= ", self.blur_ksize.get())
+        # Get the current values from settings sliders
         self.vision_service.blur_ksize.set(self.blur_ksize.get())
+        self.vision_service.grid_width.set(self.grid_width.get())
+        self.vision_service.grid_height.set(self.grid_height.get())
 
 
 

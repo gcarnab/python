@@ -25,9 +25,8 @@ class GCVisionService:
         self.cap = cv2.VideoCapture(0)
         self.blur_ksize = tk.IntVar(value=5)
         self.methods = self.TemplateMatchingMethods    
-
-    def set_edge_detection_settings(self, blur_ksize):
-        self.blur_ksize.set(blur_ksize.get())
+        self.grid_width = tk.IntVar(value=7)
+        self.grid_height = tk.IntVar(value=7)
 
     def get_live_view_frame(self):
         _, frame = self.cap.read()
@@ -57,10 +56,8 @@ class GCVisionService:
             print("Perform edge detection using image")
             # Load the image           
             img = cv2.imread(image)
-            ksize = self.blur_ksize.get()
-            print("ksize= ", ksize)
-            print("type(ksize)= ", type(ksize))
-            blurred_img = cv2.blur(img,ksize=(5,5))
+            ksize_value = self.blur_ksize.get()
+            blurred_img = cv2.blur(img,ksize=(ksize_value,ksize_value))
 
             # Convert the image to RGB 
             img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -187,3 +184,41 @@ class GCVisionService:
 
         # Convert the image to PIL format
         return Image.fromarray(heatmap_image)
+    
+    def grid_detection(self, image, processing_canvas, source_canvas) :
+        print("Perform grid_detection")
+        # Load the image           
+        img = cv2.imread(image)
+
+        grid_width = self.grid_width.get()
+        grid_height = self.grid_height.get()
+
+        #found, corners = cv2.findChessboardCorners(img,(7,7))
+        found, corners = cv2.findCirclesGrid(img, (grid_width,grid_height), cv2.CALIB_CB_SYMMETRIC_GRID)
+
+        img_copy = img.copy()
+        
+        #result_image = cv2.drawChessboardCorners(img_copy, (7, 7), corners, found)
+        result_image = cv2.drawChessboardCorners(img_copy, (grid_width, grid_height), corners, found)
+
+        # Create a figure with 1 row and 3 columns, and set the figsize
+        fig, axs = plt.subplots(1, 3, figsize=(10, 10))  # Adjust the figsize as needed
+
+        # Plot the Images with adjusted aspect ratios
+        axs[0].imshow(img)
+        axs[0].set_title('Grid')
+        #axs[0].set_aspect('auto')  # Adjust aspect ratio as needed
+
+        axs[1].imshow(result_image)
+        axs[1].set_title('Result')
+        #axs[1].set_aspect('auto')  # Adjust aspect ratio as needed
+
+        # Add a blank subplot to increase space between the images
+        axs[2].axis('off')  # Turn off axis for the blank subplot
+
+        # Adjust layout
+        plt.tight_layout()
+
+        plt.show()
+
+        return result_image

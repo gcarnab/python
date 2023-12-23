@@ -1,7 +1,7 @@
 import cv2
 import matplotlib.pyplot as plt
 
-flat_chess = cv2.imread('DATA/flat_chessboard.png')
+flat_chess = cv2.imread('data/flat_chessboard.png')
 
 plt.imshow(flat_chess,cmap='gray')
 
@@ -19,7 +19,7 @@ result_image = cv2.drawChessboardCorners(flat_chess_copy, (7, 7), corners, found
 
 plt.imshow(result_image)
 #print("result_image" , result_image)
-
+"""
 dots = cv2.imread('DATA/dot_grid.png')
 plt.imshow(dots)
 
@@ -31,6 +31,6 @@ result_image = cv2.drawChessboardCorners(dbg_image_circles, (10, 10), corners, f
 plt.imshow(result_image)
 
 
-
+"""
 
 plt.show()
