@@ -1,14 +1,24 @@
 import cv2
-import tkinter as tk
-from tkinter import ttk
-from PIL import Image, ImageTk
+import numpy as np
+import matplotlib.pyplot as plt
 
-def detect_edges(frame, canvas_heatmap):
-    # Perform edge detection using Canny
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    edges = cv2.Canny(gray, 50, 150)
+img = cv2.imread('data/sammy_face.jpg')
+#plt.imshow(img)
 
-    # Display the heatmap
-    heatmap = cv2.applyColorMap(edges, cv2.COLORMAP_JET)
-    photo_heatmap = ImageTk.PhotoImage(image=Image.fromarray(heatmap))
-    canvas_heatmap.create_image(0, 0, anchor=tk.NW, image=photo_heatmap)
+blurred_img = cv2.blur(img,ksize=(5,5))
+#plt.imshow(blurred_img)
+
+#edges = cv2.Canny(image=img, threshold1=255, threshold2=255)
+#edges = cv2.Canny(image=img, threshold1=0, threshold2=255)
+
+
+# Calculate the median pixel value
+med_val = np.median(img) 
+# Lower bound is either 0 or 70% of the median value, whicever is higher
+lower = int(max(0, 0.7* med_val))
+# Upper bound is either 255 or 30% above the median value, whichever is lower
+upper = int(min(255,1.3 * med_val))
+edges = cv2.Canny(image=blurred_img, threshold1=lower , threshold2=upper+100)
+
+plt.imshow(edges)
+plt.show()

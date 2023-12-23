@@ -1,13 +1,16 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import filedialog, ttk
 import cv2
 from PIL import Image, ImageTk
-
+from modules.GCVisionService import GCVisionService
 
 class GCVisionDashboard:
     def __init__(self, root):
         self.root = root
         self.root.title("GC Vision Dashboard 2.0")
+        self.vision_service = GCVisionService()
+        self.initial_folder = "C:/GCDATA/DEV/vscode-workspace/python/GC_VISION/GC_VSION_DASHBOARD/data"
+
         # Set the dimensions of the main window
         window_width = 800  # Change this to your desired width
         window_height = 480  # Change this to your desired height
@@ -120,7 +123,44 @@ class GCVisionDashboard:
         print("Option 1 selected")
         # Clear the existing content in the Image Processing Canvas
         self.image_processing_canvas.delete("all")
-        # Perform image processing and update the Image Processing Canvas as needed
+
+        # Perform edge detection and update the Image Processing Canvas
+        edge_image = self.perform_edge_detection(True)
+
+        self.show_image_on_canvas(edge_image, self.image_processing_canvas)
+
+
+    def perform_edge_detection(self, image_flag=None):
+        if image_flag:
+            # Read the image from the specified path
+            #original_image = cv2.imread(image_path)
+
+            # Browse for template image file
+            original_image = filedialog.askopenfilename(
+                title="Select Source Image", 
+                filetypes=[("Image files", "*.png;*.jpg;*.jpeg")], 
+                initialdir=self.initial_folder)
+            
+            source_image = cv2.imread(original_image)
+            print("original_image", original_image)
+            print("source_image", source_image)
+
+            result = self.vision_service.detect_edges(source_image)
+
+        else:
+            # Capture a frame from the video stream
+            _, original_image = self.cap.read()
+      
+        return result
+    
+    def show_image_on_canvas(self, image, canvas):
+        # Convert the image to PhotoImage format
+        image = Image.fromarray(image)
+        photo = ImageTk.PhotoImage(image)
+
+        # Update the Canvas with the new image
+        canvas.create_image(0, 0, anchor=tk.NW, image=photo)
+        canvas.photo = photo
 
     def option2_callback(self):
         print("Option 2 selected")

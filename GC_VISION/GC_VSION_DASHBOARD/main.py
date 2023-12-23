@@ -5,6 +5,7 @@ from tkinter import filedialog, ttk
 from PIL import Image, ImageTk
 from modules import face_detection, edge_detection, camera_settings
 from modules.template_matching import TemplateMatching
+from modules.GCVisionService import GCVisionService
 
 class CanvasWithBorder(tk.Frame):
     def __init__(self, master, title):
@@ -48,7 +49,7 @@ class OpenCVDashboard:
 
         # Add OpenCV modules to the menu
         #self.cv_menu.add_command(label="Face Detection", command=self.show_face_detection)
-        #self.cv_menu.add_command(label="Edge Detection", command=self.show_edge_detection)
+        self.cv_menu.add_command(label="Edge Detection", command=self.show_edge_detection)
         self.cv_menu.add_command(label="Template Matching Method", command=self.choose_template_method)
         self.cv_menu.add_command(label="Template Matching", command=self.show_template_matching)
         self.cv_menu.add_separator()
@@ -77,20 +78,6 @@ class OpenCVDashboard:
         # Start video stream
         self.show_frame()
 
-    def option1_callback(self):
-        print("Option 1 selected")
-
-    def option2_callback(self):
-        print("Option 2 selected")
-
-    def create_edge_detection_tab(self):
-        # TODO: Implement edge detection tab
-        pass
-
-    def create_object_detection_tab(self):
-        # TODO: Implement object detection tab
-        pass
-    
     def show_frame(self):
         ret, frame = self.cap.read()
 
@@ -128,15 +115,19 @@ class OpenCVDashboard:
 
     def show_edge_detection(self):
         ret, frame = self.cap.read()
+        vision_service = GCVisionService()
 
         if ret:
             # Perform edge detection
-            edge_detection.detect_edges(frame, self.canvas_heatmap)
+            #edge_detection.detect_edges(frame, self.canvas_heatmap)
+
+            result_image = vision_service.detect_edges(frame)
+            self.frame_heatmap.canvas.create_image(0, 0, anchor=tk.NW, image=result_image)
 
             # Display live preview
-            canvas_width, canvas_height = self.canvas_live_preview.winfo_width(), self.canvas_live_preview.winfo_height()
-            self.photo_live_preview = self.convert_to_photo(frame, canvas_width, canvas_height)
-            self.canvas_live_preview.create_image(0, 0, anchor=tk.NW, image=self.photo_live_preview)
+            #canvas_width, canvas_height = self.frame_live_preview.canvas.winfo_width(), self.frame_live_preview.canvas.winfo_height()
+            #preview = self.convert_to_photo(frame, canvas_width, canvas_height)
+            #self.frame_live_preview.canvas.create_image(0, 0, anchor=tk.NW, image=preview)
 
     def show_image_on_canvas(self, image, canvas):
         # Resize the image to fit the canvas
