@@ -123,7 +123,7 @@ class GCVisionService:
         resized_img = cv2.resize(img, (new_width, new_height))
         return resized_img
 
-    def match_template(self, template_path, full_image_path, processing_canvas, source_canvas):
+    def match_template(self, template_path, full_image_path, processing_canvas, source_canvas, method):
  
         # All the 6 methods for comparison in a list
         # Note how we are using strings, later on we'll use the eval() function to convert to function
@@ -139,7 +139,8 @@ class GCVisionService:
         full_image_rgb = cv2.cvtColor(full_image, cv2.COLOR_BGR2RGB)
 
         # Perform template matching
-        result = cv2.matchTemplate(full_image_rgb, template_rgb, cv2.TM_CCOEFF_NORMED)
+        #result = cv2.matchTemplate(full_image_rgb, template_rgb, cv2.TM_CCOEFF_NORMED)
+        result = cv2.matchTemplate(full_image_rgb, template_rgb, method)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
         # Draw a rectangle around the matched area
