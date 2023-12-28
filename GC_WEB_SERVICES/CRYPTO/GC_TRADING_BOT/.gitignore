@@ -1,4 +1,5 @@
 __pycache__/
+gc_secrets.py
 *.cfg
 *.py[cod]
 *.egg-info/
@@ -11,3 +12,4 @@ share/
 build/
 dist/
 venv/
+log/

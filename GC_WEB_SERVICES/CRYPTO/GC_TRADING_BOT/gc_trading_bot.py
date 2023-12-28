@@ -1,6 +1,58 @@
 import backtrader as bt
 import datetime
 import yfinance as yf
+import logging
+import pandas as pd
+import quandl
+from gc_secrets import NASDAQ_KEY
+import matplotlib.pyplot as plt
+import nasdaqdatalink as ndl
+import pickle
+
+############# GLOBAL SETTINGS ###########
+
+def gc_log_config(level) :
+
+    #Configuring the Logging System:
+    #logging level (e.g., DEBUG, INFO, WARNING, ERROR, CRITICAL).
+    logging.basicConfig(level=logging.DEBUG)
+
+    #Loggers are used to emit log messages
+    logger = logging.getLogger("gc_trading_bot_logger")
+    
+    # Set the logger level
+    logger.setLevel(level)
+
+    #Handlers determine where log messages are sent
+    console_handler = logging.StreamHandler()
+    file_handler = logging.FileHandler("GC_TRADING_BOT/log/gc_trading_bot.log")
+
+    #Setting the Log Level for Handlers:
+    console_handler.setLevel(logging.INFO)
+    file_handler.setLevel(logging.DEBUG)
+
+    #Formatters specify the layout of log messages
+    log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+    #Associate formatters with handlers
+    console_handler.setFormatter(log_formatter)
+    file_handler.setFormatter(log_formatter)
+
+    #Add handlers to loggers
+    #logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+
+    """
+    logger.debug("This is a debug message")
+    logger.info("This is an info message")
+    logger.warning("This is a warning message")
+    logger.error("This is an error message")
+    logger.critical("This is a critical message")
+    """
+    return logger
+
+logger = gc_log_config(logging.INFO)
+
 
 """
 Optimize Moving Average Parameters:
@@ -49,55 +101,155 @@ class DualMACrossover(bt.Strategy):
         elif self.short_ma < self.long_ma:
             # Sell signal if not already in a short position
             if not self.position:
-                self.sell()  # Sell signal          
-            
+                self.sell()  # Sell signal    
 
-def run_backtest(strategy, symbol, start_date, end_date, plot_results=True):
+class MomentumStrategy(bt.Strategy):
+    params = (
+        ("roc_period", 14),
+        ("roc_threshold", 1.0),
+    )
+
+    def __init__(self):
+        self.roc = bt.indicators.RateOfChange(period=self.params.roc_period)
+
+    def next(self):
+        if self.roc > self.params.roc_threshold:
+            # Buy signal
+            self.buy()
+        elif self.roc < -self.params.roc_threshold:
+            # Sell signal
+            self.sell()            
+
+#function to download and cache datasets from Quandl.
+def get_quandl_data(quandl_id):
+    '''Download and cache Quandl dataseries'''
+    cache_path = '{}.pkl'.format(quandl_id).replace('/','-')
     try:
-        # Download historical data using yfinance
+        f = open(cache_path, 'rb')
+        df = pickle.load(f)   
+        print('Loaded {} from cache'.format(quandl_id))
+    except (OSError, IOError) as e:
+        print('Downloading {} from Quandl'.format(quandl_id))
+        df = quandl.get(quandl_id, returns="pandas")
+        df.to_pickle(cache_path)
+        print('Cached {} at {}'.format(quandl_id, cache_path))
+    return df
+
+def is_dataset_empty(dataset):
+    if hasattr(dataset, 'empty'):
+        return dataset.empty
+    elif isinstance(dataset, pd.DataFrame):
+        return dataset.shape[0] == 0
+    else:
+        raise ValueError("Unsupported dataset type. Please provide a Pandas DataFrame or a similar object.")
+
+def get_data(asset_type, symbol, start_date, end_date, data_source):
+    if data_source == 'quandl':
+        # Set your Quandl API key
+        quandl.ApiConfig.api_key = NASDAQ_KEY
+        if asset_type == "crypto" :
+            data = quandl.get("BCHAIN/MKPRU/" + symbol, start_date=start_date, end_date=end_date)
+        elif asset_type == "stock" :
+            #data = quandl.get_table('ZACKS/FC', ticker=symbol)
+            data = quandl.get_table('WIKI/PRICES',
+                        qopts = { 'columns': ['ticker', 'date', 'close'] },
+                        ticker = [symbol],
+                        date = { 'gte': start_date, 'lte': end_date })      
+                    
+    elif data_source == 'yfinance':
         data = yf.download(symbol, start=start_date, end=end_date)
+    else:
+        raise ValueError("Invalid data source. Choose 'quandl' or 'yfinance'")
+    return data
 
-        # Create a `backtrader` Cerebro engine
-        cerebro = bt.Cerebro()
+def run_backtest(asset_type, strategy, symbol, start_date, end_date, data_source, plot_results=False):
 
-        # Add the data feed to the engine
-        cerebro.adddata(bt.feeds.PandasData(dataname=data))
+    logger.info(">>> run_backtest")
 
-        # Add the selected strategy to the engine
-        cerebro.addstrategy(strategy)
+    try:
 
-        # Set the initial cash amount for the backtest
-        cerebro.broker.set_cash(10000)  # You may adjust the initial cash amount as needed
+        # Download historical data using the selected data source
+        data = get_data(asset_type, symbol, start_date, end_date, data_source)
 
-        # Print the starting cash amount
-        print(f"Starting Portfolio Value: {cerebro.broker.getvalue():,.2f} USD")
+        if is_dataset_empty(data):
+            print("###### EMPTY DATASET #######")     
+        else :
+            print("########## DATA ######### \n", data.head())
 
-        # Run the backtest
-        cerebro.run()
+            # Create a `backtrader` Cerebro engine
+            cerebro = bt.Cerebro()
 
-        # Print the final cash amount
-        print(f"Ending Portfolio Value: {cerebro.broker.getvalue():,.2f} USD")
+            # Add the data feed to the engine
+            cerebro.adddata(bt.feeds.PandasData(dataname=data))
 
-        # Plot the results if requested by the user
-        if plot_results:
-            cerebro.plot(style='candlestick')
+            # Add the selected strategy to the engine
+            cerebro.addstrategy(strategy)
+
+            # Set the initial cash amount for the backtest
+            cerebro.broker.set_cash(1000)  # You may adjust the initial cash amount as needed
+
+            # Print the starting cash amount
+            print(f"Starting Portfolio Value: {cerebro.broker.getvalue():,.2f} USD")
+
+            # Run the backtest
+            cerebro.run()
+
+            # Print the final cash amount
+            print(f"Ending Portfolio Value: {cerebro.broker.getvalue():,.2f} USD")
+
+            # Plot the results if requested by the user
+            if plot_results:
+                plot_title = f"Backtest Results - {symbol}"  # Set the plot title with the asset name
+                cerebro.plot(style='candlestick', title=plot_title)
+
+           
     except Exception as e:
+        logger.error(f"An error occurred: {e}")
         print(f"An error occurred: {e}")
 
-if __name__ == "__main__":
+def main_menu() :
 
-    print("Available Strategies:")
+    logger.info(">>> main_menu")
+
+    ############## MENU ###############
+    print(">>> GC_TRADING_BOT <<<\n")
+    print("Available Assets:\n")
+    print("1. STOCKS")
+    print("2. CRYPTO")     
+    print("\nAvailable Strategies:")
     print("1. Simple Moving Average (SMA) Crossover")
     print("2. Dual Moving Average (DMA) Crossover")
+    print("3. Momentum Strategy")
+    print("\nAvailable Data Sources:")
+    print("1. Quandl")
+    print("2. Yahoo Finance")    
+
     try:
-        strategy_choice = int(input("Choose a strategy (1 or 2): "))
+        asset_choice = int(input("Choose asset : "))
+        strategy_choice = int(input("Choose strategy : "))
+        data_source_choice = int(input("Choose data source : "))
+
+        if asset_choice == 1 :
+            asset_type = "stock"
+        elif asset_choice == 2 :
+            asset_type = "crypto"
 
         if strategy_choice == 1:
             selected_strategy = SMACrossover
         elif strategy_choice == 2:
             selected_strategy = DualMACrossover
+        elif strategy_choice == 3:
+            selected_strategy = MomentumStrategy            
         else:
             print("Invalid choice. Exiting.")
+            exit()
+
+        if data_source_choice == 1:
+            selected_data_source = 'quandl'
+        elif data_source_choice == 2:
+            selected_data_source = 'yfinance'
+        else:
+            print("Invalid data source choice. Exiting.")
             exit()
 
         # Get user input for the crypto asset symbol
@@ -111,7 +263,18 @@ if __name__ == "__main__":
         plot_results_input = input("Do you want to plot the results? (yes/no): ").lower()
         plot_results = plot_results_input == 'yes'
 
-        run_backtest(selected_strategy, symbol, start_date, end_date, plot_results)
+        run_backtest(asset_type, selected_strategy, symbol, start_date, end_date, selected_data_source, plot_results)
 
-    except ValueError:
+    except ValueError as e:
+        logger.error(f"An error occurred: {e}")
         print("Invalid input. Please enter valid choices.")
+
+
+if __name__ == "__main__":
+    
+    main_menu()
+
+
+
+
+
