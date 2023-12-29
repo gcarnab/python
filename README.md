@@ -6,5 +6,8 @@ ___
 
 ## Contents
 - GC_FIN_DASH : Folder containing a Financial Dashboard in python using Dash library
+- GC_GUI : Folder containing a Graphical User Interfaces and libraries collection
 - GC_ML : Folder containing Machine Learning Repository
 - GC_STATISTICS : Folder containing a Statistical Calculator
+- GC_TOOLS : Folder containing python tools
+- GC_WEB_SERVICES : Folder containing a WebServices collection

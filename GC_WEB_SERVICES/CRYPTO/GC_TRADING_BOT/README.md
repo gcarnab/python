@@ -10,9 +10,11 @@ ___
 
 ## Requirements 
 
-- pip install nasdaq-data-link
+- pip install backtrader
 
 ## Resources 
+
+- https://www.backtrader.com/docu/
 
 1. **Optimize Moving Average Parameters**: Experiment with different combinations of short and long moving average periods to find values that better capture the trend in the cryptocurrency market.
 2. **Implement Risk Management**: Introduce risk management techniques to limit the impact of losses. In the example below, a maximum risk per trade is implemented as a percentage of the portfolio value.

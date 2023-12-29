@@ -1,4 +1,5 @@
 import backtrader as bt
+import backtrader.analyzers as btanalyzers
 import datetime
 import yfinance as yf
 import logging
@@ -67,20 +68,46 @@ Adjust the initial cash amount and position sizing to better align with the risk
 """
 class SMACrossover(bt.Strategy):
     params = (
-        ("short_period", 50),
-        ("long_period", 200),
+        ("short_period", 21),
+        ("long_period", 50),
     )
 
     def __init__(self):
         self.short_ma = bt.indicators.SimpleMovingAverage(self.data.close, period=self.params.short_period)
         self.long_ma = bt.indicators.SimpleMovingAverage(self.data.close, period=self.params.long_period)
-
+    '''
     def next(self):
         if self.short_ma > self.long_ma:
             # Buy signal
             self.buy()
         elif self.short_ma < self.long_ma:
             # Sell signal
+            self.sell()
+    '''
+    def next(self):
+        if self.short_ma[0] > self.long_ma[0] and self.short_ma[-1] < self.long_ma[-1]:
+            self.buy()
+        elif self.short_ma[0] < self.long_ma[0] and self.short_ma[-1] > self.long_ma[-1]:
+            self.sell()
+
+class EMACrossover(bt.Strategy):
+    params = (
+        ('ema_short_period', 10),
+        ('ema_long_period', 20)
+    )
+
+    def __init__(self):
+        self.ema_short = bt.indicators.ExponentialMovingAverage(
+            self.data.close, period=self.params.ema_short_period
+        )
+        self.ema_long = bt.indicators.ExponentialMovingAverage(
+            self.data.close, period=self.params.ema_long_period
+        )
+
+    def next(self):
+        if self.ema_short[0] > self.ema_long[0] and self.ema_short[-1] < self.ema_long[-1]:
+            self.buy()
+        elif self.ema_short[0] < self.ema_long[0] and self.ema_short[-1] > self.ema_long[-1]:
             self.sell()
 
 class DualMACrossover(bt.Strategy):
@@ -170,17 +197,19 @@ def run_backtest(asset_type, strategy, symbol, start_date, end_date, data_source
 
         # Download historical data using the selected data source
         data = get_data(asset_type, symbol, start_date, end_date, data_source)
+        #data_csv = bt.feeds.BacktraderCSVData(dataname='../../datas/2005-2006-day-001.txt')
 
         if is_dataset_empty(data):
             print("###### EMPTY DATASET #######")     
         else :
-            print("########## DATA ######### \n", data.head())
+            #print("########## DATA ######### \n", data.head())
 
             # Create a `backtrader` Cerebro engine
             cerebro = bt.Cerebro()
 
             # Add the data feed to the engine
             cerebro.adddata(bt.feeds.PandasData(dataname=data))
+            #cerebro.adddata(data_csv)
 
             # Add the selected strategy to the engine
             cerebro.addstrategy(strategy)
@@ -188,11 +217,27 @@ def run_backtest(asset_type, strategy, symbol, start_date, end_date, data_source
             # Set the initial cash amount for the backtest
             cerebro.broker.set_cash(1000)  # You may adjust the initial cash amount as needed
 
+            # Set position size
+            cerebro.addsizer(bt.sizers.FixedSize, stake=10)
+
+            # Set commission
+            cerebro.broker.setcommission(commission=0.001)
+
             # Print the starting cash amount
             print(f"Starting Portfolio Value: {cerebro.broker.getvalue():,.2f} USD")
 
+            # Add the TradeAnalyzer to the engine
+            cerebro.addanalyzer(btanalyzers.SharpeRatio, _name='mysharpe')
+            cerebro.addanalyzer(btanalyzers.TradeAnalyzer, _name="trade_analyzer")
+
             # Run the backtest
-            cerebro.run()
+            #cerebro.run()
+            thestrats = cerebro.run()
+            thestrat = thestrats[0]
+
+            print("############## ANALYSIS ##############\n")
+            print('Sharpe Ratio:', thestrat.analyzers.mysharpe.get_analysis())     
+            #print('TradeAnalyzer:', thestrat.analyzers.trade_analyzer.get_analysis())
 
             # Print the final cash amount
             print(f"Ending Portfolio Value: {cerebro.broker.getvalue():,.2f} USD")
@@ -260,8 +305,8 @@ def main_menu() :
         end_date = input("Enter the end date (YYYY-MM-DD): ")
 
         # Allow the user to choose whether to plot the results
-        plot_results_input = input("Do you want to plot the results? (yes/no): ").lower()
-        plot_results = plot_results_input == 'yes'
+        plot_results_input = input("Do you want to plot the results? (y/n): ").lower()
+        plot_results = plot_results_input == 'y'
 
         run_backtest(asset_type, selected_strategy, symbol, start_date, end_date, selected_data_source, plot_results)
 
@@ -272,7 +317,9 @@ def main_menu() :
 
 if __name__ == "__main__":
     
-    main_menu()
+    #main_menu()
+    run_backtest("crypto", EMACrossover, "BTC-USD", "2018-01-01", "2020-01-01", "yfinance", False)
+
 
 
 
