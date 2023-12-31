@@ -1,0 +1,6 @@
+.vscode/
+__pycache__/
+*.pyc
+**/*.pyc
+DATA/
+gc_main.py
