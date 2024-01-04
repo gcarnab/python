@@ -14,4 +14,5 @@ ___
 
 ## Resources 
 
-- 
+- https://realpython.com/python-statistics/
+- https://www.geeksforgeeks.org/statistics-with-python/
