@@ -14,7 +14,8 @@ ___
 
 ## Resources 
 
-- https://youtu.be/7QZWmtqJCpA?si=7fENqnuVSP9kBXo_
+- LAST VIDEO : https://youtu.be/xPlUQ2LV8jA?si=znfNNFQko5pdia7I
+- FRONTEND VIDEO : https://youtu.be/ebaWwZvpwys?si=gTqasMFGjF6z8Tjd
 - https://github.com/anni1236012/Blockchain-Implementation-in-Python-from-Scratch/tree/main
 
 

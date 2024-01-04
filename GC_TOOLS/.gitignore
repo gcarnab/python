@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 **/*.pyc
 DATA/
+gc.secrets.py

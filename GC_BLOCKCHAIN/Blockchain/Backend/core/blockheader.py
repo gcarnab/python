@@ -3,7 +3,7 @@ Copyright (c) 2024 GCARNAB
 
 """
 
-from Backend.util.util import hash256
+from ..util.util import hash256
  
 class BlockHeader:
     def __init__(self, version, prevBlockHash, merkleRoot, timestamp, bits):

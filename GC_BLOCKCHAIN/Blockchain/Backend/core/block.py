@@ -3,7 +3,6 @@ Copyright (c) 2024 GCARNAB
 
 """
 
-
 class Block:
     """
     Block is a storage containter that stores transactions

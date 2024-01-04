@@ -10,7 +10,7 @@ ___
 
 ## Requirements 
 
-- pip install openpyxl
+- 
 
 ## Resources 
 
