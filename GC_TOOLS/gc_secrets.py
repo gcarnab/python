@@ -1,3 +1,1 @@
-NASDAQ_API_KEY = "93WdNAW_UXmAyrvdxupv"
-FRED_API_KEY = "4bde4cc6b5e817018db95768c1e21340"
-API_LAYER_API_KEY = "6HqMfC0Ma27mKr3j1qwqZq9MTYzvqpos" # Exchange Rates Data API
+
