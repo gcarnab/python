@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubrica - Inserimento</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Inserisci Nuovo Contatto</h2>
+        <!-- form method="post" action="/rubrica" -->
+        <form id="contattoForm">
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="Nome" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="cognome">Cognome:</label>
+                <input type="text" id="cognome" name="Cognome" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="Email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="telefono">Telefono:</label>
+                <input type="text" id="telefono" name="Telefono" class="form-control" required>
+            </div>
+            <!-- button type="submit" class="btn btn-primary">Aggiungi Contatto</button -->
+            <button type="button" class="btn btn-primary" onclick="inviaContatto()">Aggiungi Contatto</button>
+        </form>
+    </div>
+
+    <script>
+        function inviaContatto() {
+            //alert('inviaContatto');
+            // Raccogli i dati del form
+            var nome = document.getElementById("nome").value;
+            var cognome = document.getElementById("cognome").value;
+            var email = document.getElementById("email").value;
+            var telefono = document.getElementById("telefono").value;
+
+            // Costruisci l'oggetto contatto
+            var nuovoContatto = {
+                "Nome": nome,
+                "Cognome": cognome,
+                "Email": email,
+                "Telefono": telefono
+            };
+
+            // Effettua la richiesta POST con i dati JSON
+            fetch('/rubrica', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(nuovoContatto)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Errore durante l\'aggiunta del contatto');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Gestisci la risposta (ad esempio, mostra un messaggio di conferma)
+                    console.log(data);
+
+                    // Mostra un popup con l'esito dell'inserimento
+                    alert(data.message);
+
+                    // Reindirizza alla pagina della lista degli elementi
+                    window.location.href = '/rubrica';
+                })
+                .catch(error => {
+                    // Gestisci gli errori (ad esempio, mostra un messaggio di errore)
+                    console.error(error);
+                });
+        }
+    </script>
+
+
+</body>
+
+</html>

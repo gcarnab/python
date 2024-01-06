@@ -3,6 +3,3 @@ __pycache__/
 *.pyc
 **/*.pyc
 DATA/
-log/
-gc_secrets.py
-test.py

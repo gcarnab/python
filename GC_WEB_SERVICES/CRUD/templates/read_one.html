@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubrica - Dettagli Contatto</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Dettagli Contatto</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ contact.Nome }} {{ contact.Cognome }}</h5>
+            <p class="card-text">Email: {{ contact.Email }}</p>
+            <p class="card-text">Telefono: {{ contact.Telefono }}</p>
+            <a href="/rubrica" class="btn btn-primary">Torna alla Rubrica</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

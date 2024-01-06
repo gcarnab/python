@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubrica - Visualizza</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Elenco Contatti</h2>
+        <!--
+    <ul class="list-group">
+        {% for contact in data %}
+            <li class="list-group-item">
+                {{ contact.Nome }} {{ contact.Cognome }} - Email: {{ contact.Email }}, Telefono: {{ contact.Telefono }}
+                <a href="/rubrica/{{ loop.index0 }}" class="btn btn-primary btn-sm float-right">Dettagli</a>
+            </li>
+        {% endfor %}
+    </ul>
+    -->
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Cognome</th>
+                    <th>Email</th>
+                    <th>Telefono</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in data %}
+                <tr>
+                    <td>{{ contact.Nome }}</td>
+                    <td>{{ contact.Cognome }}</td>
+                    <td>{{ contact.Email }}</td>
+                    <td>{{ contact.Telefono }}</td>
+                    <td>
+                        <!-- Aggiungi il tasto "Dettagli" -->
+                        <a href="/rubrica/{{ loop.index0 }}" class="btn btn-info btn-sm">Dettagli</a>
+
+                        <!-- Aggiungi il tasto "Elimina" con una conferma -->
+                        <button class="btn btn-danger btn-sm"
+                            onclick="eliminaContatto({{ loop.index0 }})">Elimina</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Aggiungi un pulsante per andare al template di inserimento -->
+        <a href="/inserisci" class="btn btn-success mt-3">Inserisci Nuovo Contatto</a>
+    </div>
+
+    <script>
+        function eliminaContatto(index) {
+            // Mostra una finestra di conferma
+            var conferma = confirm("Sei sicuro di voler eliminare questo contatto?");
+
+            if (conferma) {
+                // Effettua la richiesta DELETE
+                fetch(`/rubrica/${index}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Errore durante l\'eliminazione del contatto');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Mostra un popup con l'esito dell'eliminazione
+                        alert(data.message);
+
+                        // Ricarica la pagina per visualizzare l'elenco aggiornato
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        // Gestisci gli errori (ad esempio, mostra un messaggio di errore)
+                        console.error(error);
+                    });
+            }
+        }
+    </script>
+
+</body>
+
+</html>
