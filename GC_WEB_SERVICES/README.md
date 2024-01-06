@@ -6,6 +6,7 @@ ___
 
 ## Contents :
 
+- CRUD : folder containing web services for CRUD operations
 - CRYPTO : folder containing web services for crypto api
 - MAPS : folder containing web services for maps api
 - SCRAPING : folder containing web services for web scraping
