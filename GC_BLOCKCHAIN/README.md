@@ -6,9 +6,9 @@ ___
 
 ## Contents 
 
-- 
+- main.py : run a simple Blockchain simulator
 
-## Requirements 
+## Usage 
 
 - 
 
