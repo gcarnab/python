@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOAP Service Interaction</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="container mt-5">
+
+    <h1 class="mb-4">SOAP Service Interaction</h1>
+
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Say Hello Service</h2>
+        </div>
+        <div class="card-body">
+            <form action="/hello" method="post" class="mb-4">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="times">Times:</label>
+                    <input type="number" class="form-control" id="times" name="times" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Say Hello</button>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Addition Service</h2>
+        </div>
+        <div class="card-body">
+            <form action="/add" method="post" class="mb-4">
+                <div class="form-group">
+                    <label for="num1">Number 1:</label>
+                    <input type="number" class="form-control" id="num1" name="num1" required>
+                </div>
+                <div class="form-group">
+                    <label for="num2">Number 2:</label>
+                    <input type="number" class="form-control" id="num2" name="num2" required>
+                </div>
+                <button type="submit" class="btn btn-success">Add</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Subtraction Service</h2>
+        </div>
+        <div class="card-body">
+            <form action="/subtract" method="post" class="mb-4">
+                <div class="form-group">
+                    <label for="num1">Number 1:</label>
+                    <input type="number" class="form-control" id="num1" name="num1" required>
+                </div>
+                <div class="form-group">
+                    <label for="num2">Number 2:</label>
+                    <input type="number" class="form-control" id="num2" name="num2" required>
+                </div>
+                <button type="submit" class="btn btn-danger">Subtract</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
