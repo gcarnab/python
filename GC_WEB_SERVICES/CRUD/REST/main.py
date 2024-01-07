@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, jsonify
 app = Flask(__name__)
 
 # Nome del file JSON che funge da "database"
-DATABASE_FILE = "DATA/rubrica.json"
+DATABASE_FILE = "REST/DATA/rubrica.json"
 
 # Carica i dati dal file JSON, o restituisci una lista vuota se il file non esiste
 def load_database():
@@ -22,7 +22,6 @@ def save_database(data):
 
 @app.route('/')
 def home():
-    #return render_template('index.html')
     return render_template('home.html')
 
 @app.route('/rubrica', methods=['GET', 'POST'])

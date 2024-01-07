@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dettaglio Contatto</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h1 class="mb-4">Dettaglio Contatto</h1>
+
+        <dl class="row">
+            <dt class="col-sm-3">Nome:</dt>
+            <dd class="col-sm-9">{{ contatto.Nome }}</dd>
+
+            <dt class="col-sm-3">Cognome:</dt>
+            <dd class="col-sm-9">{{ contatto.Cognome }}</dd>
+
+            <dt class="col-sm-3">Email:</dt>
+            <dd class="col-sm-9">{{ contatto.Email }}</dd>
+
+            <dt class="col-sm-3">Telefono:</dt>
+            <dd class="col-sm-9">{{ contatto.Telefono }}</dd>
+        </dl>
+
+        <a href="/rubrica" class="btn btn-secondary">Torna alla Rubrica</a>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.9/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
