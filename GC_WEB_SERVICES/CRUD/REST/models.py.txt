@@ -1,0 +1,60 @@
+import sqlite3
+
+class Todo(object):
+    def __init__(self, id, title, description, completed):
+        self.id = id
+        self.title = title
+        self.description = description
+        self.completed = completed
+
+    def save(self):
+        conn = sqlite3.connect(':memory:')
+        c = conn.cursor()
+
+        c.execute('INSERT INTO todos (title, description, completed) VALUES (?, ?, ?)', (self.title, self.description, self.completed))
+        conn.commit()
+        conn.close()
+
+    def update(self):
+        conn = sqlite3.connect(':memory:')
+        c = conn.cursor()
+
+        c.execute('UPDATE todos SET title=?, description=?, completed=? WHERE id=?', (self.title, self.description, self.completed, self.id))
+        conn.commit()
+        conn.close()
+
+    def delete(self):
+        conn = sqlite3.connect(':memory:')
+        c = conn.cursor()
+
+        c.execute('DELETE FROM todos WHERE id=?', (self.id,))
+        conn.commit()
+        conn.close()
+
+def get_all_todos():
+    conn = sqlite3.connect(':memory:')
+    c = conn.cursor()
+
+    c.execute('SELECT * FROM todos')
+    todos = []
+    for row in c.fetchall():
+        todo = Todo(row[0], row[1], row[2], row[3])
+        todos.append(todo)
+
+    conn.close()
+    return todos
+
+def get_todo(id):
+    conn = sqlite3.connect(':memory:')
+    c = conn.cursor()
+
+    c.execute('SELECT * FROM todos WHERE id=?', (id,))
+    row = c.fetchone()
+
+    if row:
+        todo = Todo(row[0], row[1], row[2], row[3])
+        conn.close()
+        return todo
+    else:
+        conn.close()
+        return None

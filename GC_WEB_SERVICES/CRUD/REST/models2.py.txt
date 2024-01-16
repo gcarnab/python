@@ -1,0 +1,76 @@
+# models.py
+import sqlite3
+from flask import g
+
+'''
+To address the sqlite3.ProgrammingError: SQLite objects created in a thread can only be used 
+in that same thread issue, you should ensure that SQLite connections and cursors are being 
+used in a thread-safe manner. This is especially important when using Flask, as it may 
+handle requests in multiple threads.To make it thread-safe, you can modify the get_db and 
+get_cursor methods to use Flask's g object.
+'''
+
+class Item:
+    def __init__(self, id, name, description):
+        self.id = id
+        self.name = name
+        self.description = description
+        
+
+class Database:
+    def __init__(self):
+        self.db_in_memory = True
+        self.init_db()    
+
+    def init_db(self):
+        if self.db_in_memory:
+            self.conn = sqlite3.connect(':memory:')
+        else:
+            self.conn = sqlite3.connect('test.db')
+
+        self.conn.execute('''
+            CREATE TABLE IF NOT EXISTS items (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                description TEXT
+            )
+        ''')
+        self.conn.commit()
+
+    def get_db(self):
+        db = getattr(g, '_database', None)
+        if db is None:
+            db = g._database = self.conn
+        return db
+    
+    def get_cursor(self):
+        return self.get_db().cursor()
+        
+    def get_all_items(self):
+        with self.get_cursor() as cursor:
+            cursor.execute('SELECT * FROM items')
+            rows = cursor.fetchall()
+        return [Item(*row) for row in rows]
+    
+    def get_item_by_id(self, item_id):
+        with self.get_cursor() as cursor:
+            cursor.execute('SELECT * FROM items WHERE id = ?', (item_id,))
+            row = cursor.fetchone()
+        if row:
+            return Item(*row)
+        return None
+
+    def add_item(self, name, description):
+        with self.get_cursor() as cursor:
+            cursor.execute('INSERT INTO items (name, description) VALUES (?, ?)', (name, description))
+            self.get_db().commit()
+
+    def update_item(self, item_id, name, description):
+        with self.get_cursor() as cursor:
+            cursor.execute('UPDATE items SET name = ?, description = ? WHERE id = ?', (name, description, item_id))
+            self.get_db().commit()
+
+    def delete_item(self, item_id):
+        with self.get_cursor() as cursor:
+            cursor.execute('DELETE FROM items WHERE id = ?', (item_id,))
+            self.get_db().commit()

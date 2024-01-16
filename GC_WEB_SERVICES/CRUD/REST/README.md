@@ -6,8 +6,8 @@ ___
 
 ## Contents
 
-- main.py : main file for service
-
+- app_items.py : main file for items CRUD app with SQLlite in-memory DB
+- app_rubrica.py : main file for items CRUD app with json DB
 
 ## Resources
 
@@ -16,6 +16,7 @@ ___
 ## Usage
 
 - pip install flask
+- pip install Flask-SQLAlchemy
 
 ## Tutorial
 
