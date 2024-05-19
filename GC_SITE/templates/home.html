@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <img src="{{ url_for('static', filename='img/GC_profile.jpg') }}" alt="Profile Photo" class="img-fluid rounded-circle mb-3">
+    </div>
+    <div class="col-md-8">
+        <h1>Giuseppe Carnabuci</h1>
+        <h3>Software Engineer</h3>
+        <p>Hello, I'm a Professor and passionate software engineer with expertise in full-stack web development.</p>
+        <p></p>
+        <p>My skills include:</p>
+        <ul>
+            <li>Software Engineering</li>
+            <li>Blockchain</li>
+            <li>Guitar</li>
+        </ul>
+        <p>Enjoy!</p>
+        <a href="{{ url_for('cv') }}" class="btn btn-primary">View CV</a>
+        <a href="{{ url_for('links') }}" class="btn btn-primary">Connect</a>
+    </div>
+</div>
+{% endblock %}
