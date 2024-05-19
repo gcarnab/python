@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}CV{% endblock %}
+
+{% block content %}
+<h1>CV</h1>
+<p>Here is my CV:</p>
+<embed src="{{ url_for('static', filename='GC_CV.pdf') }}" type="application/pdf" width="100%" height="600px" />
+{% endblock %}

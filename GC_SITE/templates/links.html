@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Links{% endblock %}
+
+{% block content %}
+<h1>Links</h1>
+<p>Connect with me on social media:</p>
+<ul class="list-unstyled">
+    <li>
+        <a href="https://www.linkedin.com/">
+            <img src="{{ url_for('static', filename='img/linkedin.png') }}" alt="LinkedIn" width="30" height="30">
+        </a>
+        <a target="_blank" href="https://www.linkedin.com/in/giuseppecarnabuci/">LinkedIn</a>
+    </li>
+    <li>
+        <a href="https://github.com/">
+            <img src="{{ url_for('static', filename='img/github.png') }}" alt="GitHub" width="30" height="30">
+        </a>
+        <a target="_blank" href="https://github.com/gcarnab">GitHub</a>
+    </li>
+    <li>
+        <a href="https://twitter.com/">
+            <img src="{{ url_for('static', filename='img/x.jpg') }}" alt="X" width="30" height="30">
+        </a>
+        <a target="_blank" href="https://www.google.com/url?q=https%3A%2F%2Ftwitter.com%2Fgcarnab&sa=D&sntz=1&usg=AOvVaw16Q2Cq57l2z-gO4o99qrLI">X</a>
+    </li>
+</ul>
+{% endblock %}

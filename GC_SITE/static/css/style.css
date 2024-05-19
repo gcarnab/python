@@ -1,0 +1,56 @@
+/* Body styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+}
+
+/* Navbar styles */
+.navbar {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link {
+    color: #fff;
+}
+
+/* Container styles */
+.container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Section heading styles */
+h1, h2, h3 {
+    color: #007bff;
+}
+
+/* Button styles */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Footer styles */
+footer {
+    margin-top: 50px;
+    padding: 20px 0;
+    background-color: #343a40;
+    color: #fff;
+    text-align: center;
+}
+
+/* Add this to your CSS file */
+.nav-item.active .nav-link {
+    color: #fff; /* Change text color */
+    background-color: #007bff; /* Change background color */
+}

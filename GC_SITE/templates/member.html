@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block title %}Member Area{% endblock %}
+
+{% block content %}
+<h1>Welcome, {{ session['username'] }}</h1>
+<p>This is the member area.</p>
+{% endblock %}
