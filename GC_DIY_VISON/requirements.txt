@@ -5,10 +5,10 @@
 # Gli utenti le installano con: pip install -r requirements.txt
 
 # OpenCV - Computer Vision
-opencv-python==4.12.0.88
+opencv-python==4.8.1.78
 
 # NumPy - Calcoli numerici e array
-numpy==2.4.1
+numpy==1.24.3
 
 # PySerial - Comunicazione seriale (per Arduino/ESP32)
 # Opzionale per ora, decommentare quando servirà

@@ -1,0 +1,366 @@
+"""
+========================================
+SISTEMA DI VISIONE ARTIFICIALE - MAIN
+========================================
+
+Questo programma:
+1. Apre la webcam
+2. Rileva oggetti colorati (default: rosso)
+3. Disegna un mirino sul centro dell'oggetto
+4. Calcola coordinate reali in millimetri
+5. Stampa coordinate su console
+
+Controlli da tastiera:
+- ESC: Chiudi programma
+- SPAZIO: Pausa/Riprendi
+- 'c': Cattura screenshot
+- 'd': Attiva/disattiva modalità debug
+
+Autore: Progetto Didattico Visione Artificiale
+"""
+
+# ====================================
+# IMPORTAZIONE LIBRERIE
+# ====================================
+
+import cv2          # OpenCV - libreria per computer vision
+import numpy as np  # NumPy - libreria per calcoli numerici
+import time         # Per misurare tempo/FPS
+import config_claude as config   # Importa le nostre configurazioni
+
+# Controlla se le librerie sono installate correttamente
+print("✓ Librerie importate con successo!")
+print(f"  - OpenCV versione: {cv2.__version__}")
+print(f"  - NumPy versione: {np.__version__}")
+
+
+# ====================================
+# CLASSE PRINCIPALE
+# ====================================
+
+class SistemaVisioneArtificiale:
+    """
+    Classe che gestisce tutto il sistema di visione.
+    
+    Una classe è come una "scatola" che contiene dati e funzioni correlate.
+    In questo caso, contiene tutto quello che serve per gestire la webcam
+    e rilevare oggetti.
+    """
+    
+    def __init__(self):
+        """
+        Costruttore - viene eseguito quando creiamo l'oggetto.
+        Inizializza webcam e variabili.
+        """
+        print("\n🔧 Inizializzazione sistema...")
+        
+        # Variabili per gestire lo stato
+        self.paused = False              # Il video è in pausa?
+        self.debug_mode = config.SHOW_DEBUG  # Modalità debug attiva?
+        self.frame_count = 0             # Contatore frame processati
+        self.screenshot_count = 0        # Contatore screenshot salvati
+        
+        # Variabili per calcolare FPS (fotogrammi al secondo)
+        self.fps = 0
+        self.fps_time = time.time()
+        
+        # Apre la connessione con la webcam
+        self.camera = cv2.VideoCapture(config.CAMERA_INDEX)
+        
+        # Verifica se webcam è stata aperta correttamente
+        if not self.camera.isOpened():
+            raise Exception("❌ ERRORE: Impossibile aprire la webcam!")
+        
+        # Configura risoluzione e FPS webcam
+        self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAMERA_WIDTH)
+        self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAMERA_HEIGHT)
+        self.camera.set(cv2.CAP_PROP_FPS, config.CAMERA_FPS)
+        
+        print("✓ Webcam inizializzata correttamente!")
+        print(f"  - Risoluzione: {config.CAMERA_WIDTH}x{config.CAMERA_HEIGHT}")
+        print(f"  - FPS target: {config.CAMERA_FPS}")
+        print("\n▶ Premi ESC per uscire, SPAZIO per pausa\n")
+    
+    
+    def pixel_to_mm(self, x_pixel, y_pixel):
+        """
+        Converte coordinate pixel in millimetri reali.
+        
+        Parametri:
+            x_pixel: coordinata X in pixel
+            y_pixel: coordinata Y in pixel
+            
+        Ritorna:
+            tupla (x_mm, y_mm) in millimetri
+        """
+        # Calcola distanza dall'origine in pixel
+        delta_x = x_pixel - config.ORIGIN_X
+        delta_y = config.ORIGIN_Y - y_pixel  # Invertiamo Y (schermo vs robot)
+        
+        # Converti in millimetri
+        x_mm = delta_x * config.MM_PER_PIXEL
+        y_mm = delta_y * config.MM_PER_PIXEL
+        
+        return (x_mm, y_mm)
+    
+    
+    def rileva_oggetto(self, frame):
+        """
+        Rileva oggetto colorato nel frame.
+        
+        Parametri:
+            frame: immagine acquisita dalla webcam (formato BGR)
+            
+        Ritorna:
+            tupla (centro_x, centro_y, area) se oggetto trovato
+            None se nessun oggetto trovato
+        """
+        # PASSO 1: Converti immagine da BGR a HSV
+        # HSV è migliore per rilevare colori rispetto a RGB
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        
+        # PASSO 2: Applica filtro blur per ridurre rumore
+        # Il rumore sono pixel "impazziti" che possono confondere il rilevamento
+        hsv_blur = cv2.GaussianBlur(hsv, (config.BLUR_KERNEL, config.BLUR_KERNEL), 0)
+        
+        # PASSO 3: Crea "maschera" - immagine bianco/nero
+        # Bianco = pixel nel range colore target
+        # Nero = pixel fuori range
+        maschera = cv2.inRange(hsv_blur, config.COLOR_LOWER_HSV, config.COLOR_UPPER_HSV)
+        
+        # PASSO 4: Operazioni morfologiche per pulire la maschera
+        # "Opening" = erosione seguita da dilatazione
+        # Rimuove piccoli puntini bianchi (rumore)
+        kernel = np.ones((5, 5), np.uint8)
+        maschera = cv2.morphologyEx(maschera, cv2.MORPH_OPEN, kernel)
+        maschera = cv2.morphologyEx(maschera, cv2.MORPH_CLOSE, kernel)
+        
+        # Mostra maschera se modalità debug attiva
+        if self.debug_mode:
+            cv2.imshow("Debug - Maschera Colore", maschera)
+        
+        # PASSO 5: Trova contorni (bordi) degli oggetti bianchi
+        contorni, _ = cv2.findContours(maschera, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        
+        # PASSO 6: Trova il contorno più grande (= oggetto più grande)
+        if len(contorni) > 0:
+            # Ordina contorni per area (dal più grande al più piccolo)
+            contorno_max = max(contorni, key=cv2.contourArea)
+            area = cv2.contourArea(contorno_max)
+            
+            # Verifica se l'area è nel range accettabile
+            if config.MIN_AREA < area < config.MAX_AREA:
+                # Calcola "momenti" del contorno (proprietà geometriche)
+                M = cv2.moments(contorno_max)
+                
+                # Calcola centro dell'oggetto (centroide)
+                # Formula: cx = M10/M00, cy = M01/M00
+                if M["m00"] != 0:  # Evita divisione per zero
+                    cx = int(M["m10"] / M["m00"])
+                    cy = int(M["m01"] / M["m00"])
+                    
+                    # Disegna contorno su frame (per debug)
+                    if self.debug_mode:
+                        cv2.drawContours(frame, [contorno_max], -1, config.COLOR_BBOX, 2)
+                    
+                    return (cx, cy, area)
+        
+        # Nessun oggetto valido trovato
+        return None
+    
+    
+    def disegna_mirino(self, frame, x, y):
+        """
+        Disegna un mirino a croce sul punto (x, y).
+        
+        Parametri:
+            frame: immagine su cui disegnare
+            x, y: coordinate del centro mirino
+        """
+        size = config.CROSSHAIR_SIZE
+        color = config.COLOR_CROSSHAIR
+        thickness = config.LINE_THICKNESS
+        
+        # Linea orizzontale
+        cv2.line(frame, (x - size, y), (x + size, y), color, thickness)
+        # Linea verticale
+        cv2.line(frame, (x, y - size), (x, y + size), color, thickness)
+        # Cerchio centrale
+        cv2.circle(frame, (x, y), 5, color, -1)  # -1 = riempito
+    
+    
+    def disegna_info(self, frame, x_px, y_px, x_mm, y_mm, area):
+        """
+        Disegna informazioni testuali sul frame.
+        
+        Parametri:
+            frame: immagine su cui scrivere
+            x_px, y_px: coordinate in pixel
+            x_mm, y_mm: coordinate in millimetri
+            area: area oggetto in pixel²
+        """
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        color = config.COLOR_TEXT
+        
+        # Testo coordinate pixel
+        testo_px = f"Pixel: X={x_px} Y={y_px}"
+        cv2.putText(frame, testo_px, (10, 30), font, 0.6, color, 2)
+        
+        # Testo coordinate millimetri (IMPORTANTE!)
+        testo_mm = f"Robot: X={x_mm:.1f}mm Y={y_mm:.1f}mm"
+        cv2.putText(frame, testo_mm, (10, 60), font, 0.6, (0, 255, 0), 2)
+        
+        # Area oggetto
+        testo_area = f"Area: {int(area)} px2"
+        cv2.putText(frame, testo_area, (10, 90), font, 0.6, color, 2)
+        
+        # FPS se abilitato
+        if config.SHOW_FPS:
+            testo_fps = f"FPS: {self.fps:.1f}"
+            cv2.putText(frame, testo_fps, (10, frame.shape[0] - 10), font, 0.6, (255, 255, 255), 2)
+    
+    
+    def calcola_fps(self):
+        """
+        Calcola FPS (fotogrammi al secondo) reali.
+        """
+        self.frame_count += 1
+        if self.frame_count >= 30:  # Aggiorna ogni 30 frame
+            tempo_attuale = time.time()
+            self.fps = self.frame_count / (tempo_attuale - self.fps_time)
+            self.fps_time = tempo_attuale
+            self.frame_count = 0
+    
+    
+    def gestisci_tastiera(self, frame):
+        """
+        Gestisce input da tastiera.
+        
+        Ritorna:
+            False se utente vuole uscire, True altrimenti
+        """
+        key = cv2.waitKey(1) & 0xFF
+        
+        # ESC = esci
+        if key == 27:
+            print("\n👋 Chiusura programma...")
+            return False
+        
+        # SPAZIO = pausa
+        elif key == ord(' '):
+            self.paused = not self.paused
+            stato = "IN PAUSA" if self.paused else "RIPRESO"
+            print(f"⏸  {stato}")
+        
+        # 'c' = screenshot
+        elif key == ord('c'):
+            filename = f"screenshot_{self.screenshot_count:03d}.jpg"
+            cv2.imwrite(filename, frame)
+            self.screenshot_count += 1
+            print(f"📸 Screenshot salvato: {filename}")
+        
+        # 'd' = toggle debug
+        elif key == ord('d'):
+            self.debug_mode = not self.debug_mode
+            stato = "ON" if self.debug_mode else "OFF"
+            print(f"🔧 Modalità debug: {stato}")
+        
+        return True
+    
+    
+    def esegui(self):
+        """
+        Loop principale del programma.
+        Acquisisce frame, rileva oggetto, mostra risultati.
+        """
+        try:
+            while True:
+                # Leggi frame da webcam
+                ret, frame = self.camera.read()
+                
+                # Verifica se frame acquisito correttamente
+                if not ret:
+                    print("❌ Errore lettura frame!")
+                    break
+                
+                # Se non in pausa, processa il frame
+                if not self.paused:
+                    # Rileva oggetto
+                    risultato = self.rileva_oggetto(frame)
+                    
+                    if risultato is not None:
+                        x_px, y_px, area = risultato
+                        
+                        # Converti in millimetri
+                        x_mm, y_mm = self.pixel_to_mm(x_px, y_px)
+                        
+                        # Disegna mirino
+                        self.disegna_mirino(frame, x_px, y_px)
+                        
+                        # Disegna informazioni
+                        self.disegna_info(frame, x_px, y_px, x_mm, y_mm, area)
+                        
+                        # Stampa su console (se abilitato)
+                        if config.PRINT_COORDINATES:
+                            print(f"🎯 Oggetto rilevato → X: {x_mm:6.1f}mm  Y: {y_mm:6.1f}mm  Area: {int(area):5d}px²")
+                    
+                    else:
+                        # Nessun oggetto rilevato
+                        cv2.putText(frame, "Nessun oggetto rilevato", (10, 30), 
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                
+                else:
+                    # Mostra scritta PAUSA
+                    cv2.putText(frame, "PAUSA", (config.CAMERA_WIDTH//2 - 80, config.CAMERA_HEIGHT//2),
+                                cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 4)
+                
+                # Calcola FPS
+                self.calcola_fps()
+                
+                # Mostra frame
+                cv2.imshow("Sistema Visione Artificiale - Premi ESC per uscire", frame)
+                
+                # Gestisci input tastiera
+                if not self.gestisci_tastiera(frame):
+                    break
+        
+        finally:
+            # Pulizia risorse
+            self.camera.release()
+            cv2.destroyAllWindows()
+            print("✓ Risorse liberate correttamente")
+
+
+# ====================================
+# PUNTO DI INGRESSO PROGRAMMA
+# ====================================
+
+if __name__ == "__main__":
+    """
+    Questo blocco viene eseguito solo se il file è lanciato direttamente
+    (non se viene importato come modulo)
+    """
+    print("=" * 50)
+    print("  SISTEMA DI VISIONE ARTIFICIALE")
+    print("  Progetto Didattico - Scuole Superiori")
+    print("=" * 50)
+    
+    try:
+        # Crea istanza del sistema
+        sistema = SistemaVisioneArtificiale()
+        
+        # Esegui loop principale
+        sistema.esegui()
+        
+    except KeyboardInterrupt:
+        print("\n⚠ Programma interrotto da utente (Ctrl+C)")
+    
+    except Exception as e:
+        print(f"\n❌ ERRORE: {e}")
+        print("Controlla che:")
+        print("  1. La webcam sia collegata")
+        print("  2. Nessun altro programma stia usando la webcam")
+        print("  3. I driver della webcam siano installati")
+    
+    finally:
+        print("\n👋 Programma terminato")

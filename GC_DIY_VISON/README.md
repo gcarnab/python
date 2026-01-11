@@ -23,4 +23,7 @@ Segui questi passaggi per configurare l'ambiente di sviluppo in modo pulito:
     - python.exe -m pip install --upgrade pip
     - python -m venv venv
     - .\venv\Scripts\activate
+    - pip install -r requirements.txt
+    - python -m pip list - (ASSICURATI CHE VENV SIA ATTIVO!)
+
     
