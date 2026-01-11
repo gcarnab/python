@@ -1,0 +1,32 @@
+# ====================================
+# DIPENDENZE DEL PROGETTO
+# ====================================
+# Questo file elenca tutte le librerie Python necessarie
+# Gli utenti le installano con: pip install -r requirements.txt
+
+# OpenCV - Computer Vision
+opencv-python==4.12.0.88
+
+# NumPy - Calcoli numerici e array
+numpy==2.4.1
+
+# PySerial - Comunicazione seriale (per Arduino/ESP32)
+# Opzionale per ora, decommentare quando servirà
+# pyserial==3.5
+
+# ====================================
+# LIBRERIE OPZIONALI (per espansioni future)
+# ====================================
+# Decommenta se servono:
+
+# MediaPipe - AI di Google per object detection
+# mediapipe==0.10.8
+
+# YOLOv8 - AI per riconoscimento oggetti custom
+# ultralytics==8.3.252
+
+# Matplotlib - Per grafici e visualizzazioni
+# matplotlib==3.7.2
+
+# Pandas - Per analisi dati (se registri coordinate)
+# pandas==2.0.3

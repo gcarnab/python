@@ -1,0 +1,72 @@
+# ====================================
+# FILE DA ESCLUDERE DA GIT
+# ====================================
+# Questo file dice a Git quali file NON caricare su GitHub
+
+# ====================================
+# AMBIENTE VIRTUALE PYTHON
+# ====================================
+# Non carichiamo venv perché ogni utente lo ricrea sul suo PC
+venv/
+env/
+ENV/
+.venv
+
+# ====================================
+# FILE PYTHON COMPILATI
+# ====================================
+# File .pyc sono compilati automaticamente, non servono
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ====================================
+# FILE IDE (VSCODE, PYCHARM, ETC.)
+# ====================================
+# Configurazioni personali dell'editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ====================================
+# FILE SISTEMA OPERATIVO
+# ====================================
+# File temporanei Windows/Mac/Linux
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ====================================
+# SCREENSHOT E OUTPUT
+# ====================================
+# Screenshot salvati durante test (opzionale escluderli)
+screenshot_*.jpg
+screenshot_*.png
+
+# Log e file temporanei
+*.log
+*.tmp
+*.bak
+
+# ====================================
+# CONFIGURAZIONI PERSONALI
+# ====================================
+# Se crei file config personali
+config_local.py
+settings_local.json
+
+# ====================================
+# DATI E MODELLI ADDESTRATI
+# ====================================
+# Se usi modelli AI custom (sono grandi)
+models/
+*.pth
+*.h5
+*.onnx
+
+# File dati grossi
+data/*.mp4
+data/*.avi
